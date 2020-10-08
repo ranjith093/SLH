@@ -15,6 +15,12 @@ import * as actionTypes from "../../../store/actions";
 import "./app.scss";
 
 class AdminLayout extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      token: false
+    };
+  }
   fullScreenExitHandler = () => {
     if (
       !document.fullscreenElement &&
@@ -25,8 +31,21 @@ class AdminLayout extends Component {
       this.props.onFullScreenExit();
     }
   };
+  componentDidMount(){
+    const tokenData = localStorage.getItem('token')
+    console.log("token datassssssss",tokenData)
 
+    // setToken(localStorage.getItem('token'))
+    if(tokenData){
+      console.log("token data if")
+      this.setState({
+        token:true
+      })
+    }
+
+  }
   componentWillMount() {
+
     if (
       this.props.windowWidth > 992 &&
       this.props.windowWidth <= 1024 &&
@@ -87,7 +106,9 @@ class AdminLayout extends Component {
                       <Suspense fallback={<Loader />}>
                         <Switch>
                           {menu}
+
                           <Redirect from="/" to={this.props.defaultPath} />
+                          
                         </Switch>
                       </Suspense>
                     </div>

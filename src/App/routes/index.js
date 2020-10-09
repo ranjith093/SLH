@@ -11,6 +11,7 @@ const DashboardDefault = React.lazy(() =>
 );
 
 const Cpass = React.lazy(() => import("../layout/Cpass"));
+const CpassAdd = React.lazy(() => import("../layout/Cpass/add"));
 
 const routes = [
   {
@@ -20,6 +21,7 @@ const routes = [
     component: DashboardDefault,
   },
   { path: "/cpass", exact: true, name: "Cpass", component: Cpass },
+  { path: "/cpass/:id", exact: true, name: "Cpass", component: CpassAdd },
 ];
 
 export default routes;

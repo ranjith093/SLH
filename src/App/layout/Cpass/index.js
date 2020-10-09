@@ -9,6 +9,7 @@ import {
   FormControl,
   DropdownButton,
   Dropdown,
+  Modal,
 } from "react-bootstrap";
 
 import { Formik } from "formik";
@@ -16,6 +17,7 @@ import { Formik } from "formik";
 import Aux from "../../../hoc/_Aux";
 
 import { requestQuery } from "../../helpers/apirequest";
+import { Link } from "react-router-dom";
 
 const validate = (values) => {
   // console.log("validate");
@@ -37,8 +39,138 @@ const validate = (values) => {
   return errors;
 };
 
+function MyVerticallyCenteredModal(props) {
+  console.log("props", { ...props });
+  const { setCpass, ...props1 } = props;
+  const passto = (entry, values) => {
+    console.log("values from modal pass to", values);
+  };
+
+  const onSubmit = (values) => {
+    // console.log("values ", values);
+
+    const path = "cpass/add";
+    const url = `http://localhost:5000/${path}`;
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    };
+    return fetch(url, requestOptions)
+      .then((response) => response.json())
+      .then((json) => {
+        console.log("data api", json);
+        // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
+        if (json.status === "fail") {
+          console.log(json.error);
+          return;
+        }
+        const entry = {
+          id: json.id,
+        };
+
+        // setCpass(entry);
+
+        setCpass((preState) => [...preState, Object.assign(entry, values)]);
+        props.onHide();
+
+        // props.setCpass((preState) => [
+        //   ...preState,
+        //   Object.assign(entry, values),
+        // ]);
+      });
+  };
+  return (
+    <Modal
+      {...props1}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Modal heading
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Formik
+          // validationSchema={schema}
+          onSubmit={onSubmit}
+          initialValues={{}}
+          validate={validate}
+        >
+          {({
+            handleSubmit,
+            handleChange,
+            handleBlur,
+            values,
+            touched,
+            isValid,
+            errors,
+          }) => (
+            <Form onSubmit={handleSubmit}>
+              <Form.Row>
+                <Form.Group as={Col} md="6" controlId="name">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Name"
+                    onChange={handleChange}
+                    isValid={touched.name && !errors.name}
+                    isInvalid={!!errors.name}
+                  />
+                  {/* <Form.Text className="text-muted">
+                          We'll never share your email with anyone else.
+                        </Form.Text> */}
+                </Form.Group>
+
+                <Form.Group as={Col} md="6" controlId="url">
+                  <Form.Label>URL</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Url"
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} md="6" controlId="token">
+                  <Form.Label>Token</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Token"
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} md="6" controlId="key">
+                  <Form.Label>Key</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Key"
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Form.Row>
+              <Form.Group controlId="checkBox">
+                <Form.Check
+                  type="checkbox"
+                  label="Check me out"
+                  onChange={handleChange}
+                />
+              </Form.Group>
+              <Button variant="primary" type="submit">
+                Submit
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </Modal.Body>
+    </Modal>
+  );
+}
+
 const Cpass = () => {
   const [cpass, setCpass] = useState([]);
+  const [modalShow, setModalShow] = React.useState(false);
 
   useEffect(() => {
     const path = "cpass";
@@ -61,50 +193,33 @@ const Cpass = () => {
       });
   }, []);
 
-  const onSubmit = (values) => {
-    console.log("values ", values);
-
-    const path = "cpass/add";
-    const url = `http://localhost:5000/${path}`;
-
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    };
-    return fetch(url, requestOptions)
-      .then((response) => response.json())
-      .then((json) => {
-        console.log("data api", json);
-        // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-        if (json.status === "fail") {
-          console.log(json.error);
-          return;
-        }
-        const entry = {
-          id: json.id,
-        };
-        setCpass((preState) => [...preState, Object.assign(entry, values)]);
-      });
+  const updateCpass = ({ entry, values }) => {
+    console.log("values", values);
+    // setCpass((preState) => [...preState, Object.assign(entry, values)]);
   };
+
   return (
     <Aux>
       <Row>
         <Col>
-          <Card>
-            <Card.Header
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Card.Title as="h5">Cpass</Card.Title>
-              <Button variant="primary">Add</Button>
-            </Card.Header>
-            <Card.Body>
-              <Row>
-                {/* EXPECTED Cpass  
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button variant="primary" onClick={() => setModalShow(true)}>
+              Add
+            </Button>
+          </div>
+          <MyVerticallyCenteredModal
+            show={modalShow}
+            onHide={() => setModalShow(false)}
+            setCpass={setCpass}
+          />
+
+          <Row>
+            {/* EXPECTED Cpass  
               cpass=   [
                   {
                       "id": "5f804458e318062dd0d888ba",
@@ -122,145 +237,48 @@ const Cpass = () => {
                   }
               ] */}
 
-                {cpass &&
-                  cpass.map((data) => (
-                    <Col key={data.id} md={6} xl={4} className="">
-                      <>
-                        <Card.Body
-                          className="shadow-1"
-                          style={{ marginTop: "20px" }}
+            {cpass &&
+              cpass.map((data) => (
+                <Col key={data.id} md={6} xl={4} className="mb-4">
+                  <>
+                    <Link to={{ pathname: `/cpass/${data.id}`, data: data }}>
+                      <Card.Body
+                        className="shadow-1"
+                        style={{ marginTop: "20px", background: "white" }}
+                      >
+                        <h6 className="mb-4">{data.url}</h6>
+                        <div className="row d-flex align-items-center mb-2">
+                          <div className="col-9">
+                            <h3 className="f-w-300 d-flex align-items-center m-b-0">
+                              <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "}
+                              {data.name}
+                            </h3>
+                          </div>
+
+                          {/* <div className="col-3 text-right">
+                            <p className="m-b-0">{data.key}</p>
+                          </div> */}
+                        </div>
+
+                        <div
+                          className="progress m-t-20"
+                          style={{ height: "7px" }}
                         >
-                          <h6 className="mb-4">{data.url}</h6>
-                          <div className="row d-flex align-items-center mb-2">
-                            <div className="col-9">
-                              <h3 className="f-w-300 d-flex align-items-center m-b-0">
-                                <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "}
-                                {data.name}
-                              </h3>
-                            </div>
-
-                            <div className="col-3 text-right">
-                              <p className="m-b-0">{data.key}</p>
-                            </div>
-                          </div>
-                          <Row>
-                            <Col>
-                              {/* <h6>URL</h6> */}
-                              {/* <h5 className="mb-4">{data.url}</h5> */}
-                            </Col>
-                            {/* <Col>
-                              <h6>Token</h6>
-                              <h5 className="">{data.token}</h5>
-                            </Col> */}
-                          </Row>
-
-                          {/* <h6 className="mb-4 ml-3">{data.key}</h6> */}
                           <div
-                            className="progress m-t-20"
-                            style={{ height: "7px" }}
-                          >
-                            <div
-                              className="progress-bar progress-c-theme"
-                              role="progressbar"
-                              style={{ width: "50%" }}
-                              aria-valuenow="50"
-                              aria-valuemin="0"
-                              aria-valuemax="100"
-                            />
-                          </div>
-                        </Card.Body>
-                      </>
-                    </Col>
-                  ))}
-              </Row>
-              {/* <hr /> */}
-              <h5 className="mt-5">Form controls</h5>
-              <hr />
-              <Formik
-                // validationSchema={schema}
-                onSubmit={onSubmit}
-                initialValues={{}}
-                validate={validate}
-              >
-                {({
-                  handleSubmit,
-                  handleChange,
-                  handleBlur,
-                  values,
-                  touched,
-                  isValid,
-                  errors,
-                }) => (
-                  <Form onSubmit={handleSubmit}>
-                    <Form.Row>
-                      <Form.Group as={Col} md="6" controlId="name">
-                        <Form.Label>Name</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter Name"
-                          onChange={handleChange}
-                          isValid={touched.name && !errors.name}
-                          isInvalid={!!errors.name}
-                        />
-                        {/* <Form.Text className="text-muted">
-                          We'll never share your email with anyone else.
-                        </Form.Text> */}
-                      </Form.Group>
-
-                      <Form.Group as={Col} md="6" controlId="url">
-                        <Form.Label>URL</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Url"
-                          onChange={handleChange}
-                        />
-                      </Form.Group>
-                      <Form.Group as={Col} md="6" controlId="token">
-                        <Form.Label>Token</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter Token"
-                          onChange={handleChange}
-                        />
-                      </Form.Group>
-                      <Form.Group as={Col} md="6" controlId="key">
-                        <Form.Label>Key</Form.Label>
-                        <Form.Control
-                          type="text"
-                          placeholder="Key"
-                          onChange={handleChange}
-                        />
-                      </Form.Group>
-                    </Form.Row>
-                    <Form.Group controlId="checkBox">
-                      <Form.Check
-                        type="checkbox"
-                        label="Check me out"
-                        onChange={handleChange}
-                      />
-                    </Form.Group>
-                    <Button variant="primary" type="submit">
-                      Submit
-                    </Button>
-                  </Form>
-                )}
-              </Formik>
-              {/* <Form.Group controlId="exampleForm.ControlSelect1">
-                      <Form.Label>Example select</Form.Label>
-                      <Form.Control as="select">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                      </Form.Control>
-                    </Form.Group> */}
-              {/* <Form.Group controlId="exampleForm.ControlTextarea1">
-                      <Form.Label>Example textarea</Form.Label>
-                      <Form.Control as="textarea" rows="3" />
-                    </Form.Group> */}
-            </Card.Body>
-          </Card>
+                            className="progress-bar progress-c-theme"
+                            role="progressbar"
+                            style={{ width: "50%" }}
+                            aria-valuenow="50"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                          />
+                        </div>
+                      </Card.Body>
+                    </Link>
+                  </>
+                </Col>
+              ))}
+          </Row>
         </Col>
       </Row>
     </Aux>

@@ -27,6 +27,15 @@ export default {
           type: "item",
           url: "/cpass",
           icon: "feather icon-home",
+          children: [
+            {
+              id: "dashboard",
+              title: "Cpass id",
+              type: "item",
+              url: "/:id",
+              icon: "feather icon-home",
+            },
+          ],
         },
       ],
     },

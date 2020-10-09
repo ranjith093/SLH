@@ -3,10 +3,13 @@ import React, {
   createContext,
   Suspense,
   useEffect,
+  useReducer,
   useState,
 } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Loadable from "react-loadable";
+
+import { AuthContext, DataContext } from "./state/context";
 
 import "../../node_modules/font-awesome/scss/font-awesome.scss";
 
@@ -22,77 +25,140 @@ const AdminLayout = Loadable({
   loading: Loader,
 });
 
-// class App extends Component {
-//   render() {
-//     const menu = routes.map((route, index) => {
-//       return route.component ? (
-//         <Route
-//           key={index}
-//           path={route.path}
-//           exact={route.exact}
-//           name={route.name}
-//           render={(props) => <route.component {...props} />}
-//         />
-//       ) : null;
-//     });
-
-//     return (
-//       <Aux>
-//         <ScrollToTop>
-//           <Suspense fallback={<Loader />}>
-//             <Switch>
-//               {menu}
-//               <Route path="/" component={AdminLayout} />
-//             </Switch>
-//           </Suspense>
-//         </ScrollToTop>
-//       </Aux>
-//     );
-//   }
-// }
-const ProtectedRoute = ({ component: Component, token, ...rest }) => {
-  return (
-    <Route
-      {...rest}
-      render={(props) => {
-        console.log("tokenw", token);
-        if (!token) {
-          return (
-            <Redirect
-              to={{
-                pathname: "/auth/signin",
-              }}
-            />
-          );
-        }
-        return <Component {...rest} {...props} />;
-      }}
-    />
-  );
-};
-
-export const AuthContext = createContext();
-
 function App() {
-  const [token, setToken] = useState(false);
+  //State
+  const [state, dispatch] = React.useReducer(
+    (prevState, action) => {
+      switch (action.type) {
+        case "RESTORE_TOKEN":
+          return {
+            ...prevState,
+            userToken: action.token,
+            isLoading: false,
+            userId: action.id,
+          };
+        case "SIGN_IN":
+          return {
+            ...prevState,
+            isSignout: false,
+            userToken: action.token,
+            userId: action.id,
+          };
+        case "SIGN_OUT":
+          return {
+            ...prevState,
+            isSignout: true,
+            userToken: null,
+            userId: null,
+          };
+        default:
+          return prevState;
+      }
+    },
+    {
+      isLoading: true,
+      isSignout: false,
+      userToken: null,
+      userId: null,
+    }
+  );
+  useEffect(() => {
+    // Fetch the token from storage then navigate to our appropriate place
+    const bootstrapAsync = async () => {
+      let userToken;
+      let userId;
+
+      try {
+        userToken = await localStorage.getItem("userToken");
+        userId = await localStorage.getItem("userId");
+        // console.log("user token", userToken)
+      } catch (e) {
+        // Restoring token failed
+      }
+
+      // After restoring token, we may need to validate it in production apps
+
+      // This will switch to the App screen or Auth screen and this loading
+      // screen will be unmounted and thrown away.
+      dispatch({ type: "RESTORE_TOKEN", token: userToken, id: userId });
+    };
+    bootstrapAsync();
+    return () => {};
+  }, []);
+
+  const authContext = React.useMemo(
+    () => ({
+      signIn: async (data) => {
+        console.log("signIn data", data);
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: data.email,
+            password: data.password,
+          }),
+        };
+        fetch("http://localhost:5000/login", requestOptions)
+          .then((response) => response.json())
+          .then((json) => {
+            console.log("data api", json);
+            localStorage.setItem("userToken", json.token);
+            localStorage.setItem("userId", json._id);
+            dispatch({ type: "SIGN_IN", token: json.token, id: json._id });
+            // setToken(true);
+          });
+
+        // In a production app, we need to send some data (usually username, password) to server and get a token
+        // We will also need to handle errors if sign in failed
+        // After getting token, we need to persist the token using `AsyncStorage`
+        // In the example, we'll use a dummy token
+        // console.log("data", data)
+        // fetch('http://192.168.0.128:5000/auth/login', {
+        //     method: 'POST',
+        //     headers: {
+        //         Accept: 'application/json',
+        //         'Content-Type': 'application/json'
+        //     }, body: JSON.stringify({
+        //         "phone": data.phone,
+        //         "password": data.passWord
+        //     })
+        // })
+        //     .then((res) => res.json())
+        //     .then((json) => {
+        //         console.log(json)
+        //         if (json.accesstocken)
+        //             return AsyncStorage.setItem("userToken", json.accesstocken)
+        //         else
+        //             throw err
+        //     })
+        //     .then(() => {
+        //         console.log("ok")
+        //         // navigation.goBack()
+        //         dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' })
+        //     })
+        //     .catch((err) => console.log(`err ${err}`))
+      },
+      signOut: () => dispatch({ type: "SIGN_OUT" }),
+      signUp: async (data) => {
+        // In a production app, we need to send user data to server and get a token
+        // We will also need to handle errors if sign up failed
+        // After getting token, we need to persist the token using `AsyncStorage`
+        // In the example, we'll use a dummy token
+
+        dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+      },
+
+      state,
+    }),
+    [state]
+  );
+
+  //End State
 
   const getLocalStorage = async () => {
     const tokenData = await localStorage.getItem("token");
     return tokenData ? true : false;
   };
-
-  useEffect(() => {
-    // setToken(localStorage.getItem('token'))
-    const tokenData = localStorage.getItem("token");
-    // console.log("get local ", getLocalStorage());
-
-    if (tokenData) {
-      // console.log("if");
-      // return <Redirect  to="/" />
-      setToken(true);
-      // window.location.reload(false);
-    }
-  }, []);
 
   const menu = routes.map((route, index) => {
     return route.component ? (
@@ -106,19 +172,18 @@ function App() {
     ) : null;
   });
 
-  console.log("token data", token);
-
   return (
     <Aux>
       <ScrollToTop>
         <Suspense fallback={<Loader />}>
-          <Switch>
-            {/* <AdminLayout/> */}
-            <AuthContext.Provider value={token}>
-              {token ? <AdminLayout /> : <AuthScreen setToken={setToken} />}
-            </AuthContext.Provider>
-            {/* <AuthScreen/> */}
-          </Switch>
+          {/* <AdminLayout/> */}
+          <AuthContext.Provider value={authContext}>
+            <Switch>
+              {state.userToken ? <AdminLayout /> : <AuthScreen />}
+            </Switch>
+          </AuthContext.Provider>
+          {/* <AuthScreen/> */}
+
           {/* <Switch>
       <Route path="/" component={AuthScreen} / >  
       <Redirect from="/"  to="/auth/signin" />

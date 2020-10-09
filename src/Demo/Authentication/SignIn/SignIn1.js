@@ -1,31 +1,37 @@
 import React, { useContext, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
-import { AuthContext } from "../../../App";
+// import { AuthContext } from "../../../App";
+
+import { AuthContext } from "../../../App/state/context";
 
 import "./../../../assets/scss/style.scss";
 import Aux from "../../../hoc/_Aux";
 import Breadcrumb from "../../../App/layout/AdminLayout/Breadcrumb";
 
-const SignUp1 = ({ setToken }) => {
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const authContext = useContext(AuthContext);
-  console.log("auth context in sign in", authContext);
+const SignUp1 = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { signIn } = useContext(AuthContext);
+  // console.log("auth context in sign in", signIn);
 
   const login = () => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: email, password: password }),
-    };
-    fetch("http://localhost:5000/login", requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("data api", data);
-        localStorage.setItem("token", data.token);
-        // setToken(true);
-      });
+    if (email && password) {
+      signIn({ email, password });
+    }
+
+    // const requestOptions = {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ username: email, password: password }),
+    // };
+    // fetch("http://localhost:5000/login", requestOptions)
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     console.log("data api", data);
+    //     localStorage.setItem("token", data.token);
+    //     // setToken(true);
+    //   });
   };
 
   useEffect(() => {

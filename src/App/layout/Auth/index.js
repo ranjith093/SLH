@@ -20,7 +20,7 @@ function index() {
       <Switch>
         {/* <Redirect from="/" to="auth/signin" /> */}
         {menu}
-        <Redirect from="/" to="auth/signin" />
+        <Redirect from="/" to="/auth/signin" />
       </Switch>
     </div>
   );

@@ -51,6 +51,11 @@ function App() {
             userToken: null,
             userId: null,
           };
+        case "SET_ERROR":
+          return {
+            ...prevState,
+            error: action.error,
+          };
         default:
           return prevState;
       }
@@ -102,6 +107,12 @@ function App() {
           .then((response) => response.json())
           .then((json) => {
             console.log("data api", json);
+            if (json.status === "fail") {
+              // {status: "fail", error: "user not exist"}
+              dispatch({ type: "SET_ERROR", error: json.error });
+              return;
+            }
+
             localStorage.setItem("userToken", json.token);
             localStorage.setItem("userId", json._id);
             dispatch({ type: "SIGN_IN", token: json.token, id: json._id });
@@ -138,14 +149,20 @@ function App() {
         //     })
         //     .catch((err) => console.log(`err ${err}`))
       },
-      signOut: () => dispatch({ type: "SIGN_OUT" }),
+      signOut: () => {
+        console.log("sign out");
+        localStorage.removeItem("userToken");
+        localStorage.removeItem("userId");
+        dispatch({ type: "SIGN_OUT" });
+      },
       signUp: async (data) => {
+        console.log("sign out");
         // In a production app, we need to send user data to server and get a token
         // We will also need to handle errors if sign up failed
         // After getting token, we need to persist the token using `AsyncStorage`
         // In the example, we'll use a dummy token
 
-        dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+        // dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
       },
 
       state,

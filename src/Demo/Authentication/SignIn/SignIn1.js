@@ -12,7 +12,7 @@ import Breadcrumb from "../../../App/layout/AdminLayout/Breadcrumb";
 const SignUp1 = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { signIn } = useContext(AuthContext);
+  const { signIn, state } = useContext(AuthContext);
   // console.log("auth context in sign in", signIn);
 
   const login = () => {
@@ -55,6 +55,7 @@ const SignUp1 = () => {
                 <i className="feather icon-unlock auth-icon" />
               </div>
               <h3 className="mb-4">Login</h3>
+
               <div className="input-group mb-3">
                 <input
                   value={email}
@@ -64,7 +65,7 @@ const SignUp1 = () => {
                   placeholder="Email"
                 />
               </div>
-              <div className="input-group mb-4">
+              <div className="input-group mb-2">
                 <input
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -73,7 +74,13 @@ const SignUp1 = () => {
                   placeholder="password"
                 />
               </div>
-              <div className="form-group text-left">
+              {state.error && (
+                <div className="form-group text-left mb-4 ml-2">
+                  <p style={{ color: "red" }}>{state.error}</p>
+                </div>
+              )}
+
+              {/* <div className="form-group text-left">
                 <div className="checkbox checkbox-fill d-inline">
                   <input
                     type="checkbox"
@@ -85,7 +92,7 @@ const SignUp1 = () => {
                     Save credentials
                   </label>
                 </div>
-              </div>
+              </div> */}
               <button className="btn btn-primary shadow-2 mb-4" onClick={login}>
                 Login
               </button>

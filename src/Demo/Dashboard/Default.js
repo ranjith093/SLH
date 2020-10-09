@@ -73,7 +73,7 @@ class Dashboard extends React.Component {
             <Aux>
                 <Row>
                     <Col md={6} xl={4}>
-                        <Card>
+                        <   >
                             <Card.Body>
                                 <h6 className='mb-4'>Daily Sales</h6>
                                 <div className="row d-flex align-items-center">
@@ -89,7 +89,7 @@ class Dashboard extends React.Component {
                                     <div className="progress-bar progress-c-theme" role="progressbar" style={{width: '50%'}} aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"/>
                                 </div>
                             </Card.Body>
-                        </Card>
+                        </>
                     </Col>
                     <Col md={6} xl={4}>
                         <Card>

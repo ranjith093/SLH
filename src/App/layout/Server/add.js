@@ -13,6 +13,44 @@ import {
 } from "react-bootstrap";
 import { Formik } from "formik";
 
+const validate = (values) => {
+  // console.log("validate");
+  const errors = {};
+  if (!values.name) {
+    errors.name = "Required";
+  } else if (values.name.length > 15) {
+    errors.name = "Must be 15 characters or less";
+  }
+
+  if (!values.ip) {
+    errors.ip = "Required";
+  }
+  // else if (
+  //   /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+  //     values.ip
+  //   )
+  // ) {
+  //   errors.ip = "Invalid IP";
+  // }
+  else if (values.ip.length > 20) {
+    errors.ip = "Must be 20 characters or less";
+  }
+  if (!values.port) {
+    errors.port = "Required";
+  } else if (values.port.length > 20) {
+    errors.port = "Must be 20 characters or less";
+  }
+  if (!values.type) {
+    errors.type = "Required";
+  } else if (values.type.length > 20) {
+    errors.type = "Must be 20 characters or less";
+  } else if (values.type === "select") {
+    errors.type = "plz select";
+  }
+
+  return errors;
+};
+
 function MyVerticallyCenteredModal(props) {
   console.log("props", { ...props });
   const { setAccounts, id, ...props1 } = props;
@@ -78,6 +116,7 @@ function MyVerticallyCenteredModal(props) {
           // validationSchema={schema}
           onSubmit={onSubmit}
           initialValues={{}}
+          validate={validate}
         >
           {({
             handleSubmit,
@@ -110,6 +149,7 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="IP"
                     onChange={handleChange}
+                    isInvalid={!!errors.ip}
                   />
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="port">
@@ -118,6 +158,7 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="Enter Port"
                     onChange={handleChange}
+                    isInvalid={!!errors.port}
                   />
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="type">
@@ -132,6 +173,7 @@ function MyVerticallyCenteredModal(props) {
                     as="select"
                     defaultValue="select"
                     onChange={handleChange}
+                    isInvalid={!!errors.type}
                   >
                     <option value="select"> Select</option>
                     <option value="mongodb">MongoDb</option>

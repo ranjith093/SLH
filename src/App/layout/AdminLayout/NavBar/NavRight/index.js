@@ -22,7 +22,7 @@ const NavRight = (props) => {
   return (
     <Aux>
       <ul className="navbar-nav ml-auto">
-        <li>
+        {/* <li>
           <Dropdown alignRight={!props.rtlLayout}>
             <Dropdown.Toggle variant={"link"} id="dropdown-basic">
               <i className="icon feather icon-bell" />
@@ -31,10 +31,10 @@ const NavRight = (props) => {
               <div className="noti-head">
                 <h6 className="d-inline-block m-b-0">Notifications</h6>
                 <div className="float-right">
-                  <a href={DEMO.BLANK_LINK} className="m-r-10">
+                  <a  className="m-r-10">
                     mark as read
                   </a>
-                  <a href={DEMO.BLANK_LINK}>clear all</a>
+                  <a >clear all</a>
                 </div>
               </div>
               <ul className="noti-body">
@@ -103,14 +103,14 @@ const NavRight = (props) => {
                 </li>
               </ul>
               <div className="noti-footer">
-                <a href={DEMO.BLANK_LINK}>show all</a>
+                <a >show all</a>
               </div>
             </Dropdown.Menu>
           </Dropdown>
-        </li>
-        <li className={props.rtlLayout ? "m-r-15" : "m-l-15"}>
+        </li> */}
+        {/* <li className={props.rtlLayout ? "m-r-15" : "m-l-15"}>
           <a
-            href={DEMO.BLANK_LINK}
+            
             className="displayChatbox"
             onClick={() => {
               //   this.setState({ listOpen: true });
@@ -119,7 +119,7 @@ const NavRight = (props) => {
           >
             <i className="icon feather icon-mail" />
           </a>
-        </li>
+        </li> */}
         <li>
           <Dropdown alignRight={!props.rtlLayout} className="drp-user">
             <Dropdown.Toggle variant={"link"} id="dropdown-basic">
@@ -135,22 +135,22 @@ const NavRight = (props) => {
               </div>
               <ul className="pro-body">
                 <li>
-                  <a href={DEMO.BLANK_LINK} className="dropdown-item">
+                  <a className="dropdown-item">
                     <i className="feather icon-settings" /> Settings
                   </a>
                 </li>
                 <li>
-                  <a href={DEMO.BLANK_LINK} className="dropdown-item">
+                  <a className="dropdown-item">
                     <i className="feather icon-user" /> Profile
                   </a>
                 </li>
                 <li>
-                  <a href={DEMO.BLANK_LINK} className="dropdown-item">
+                  <a className="dropdown-item">
                     <i className="feather icon-mail" /> My Messages
                   </a>
                 </li>
                 <li>
-                  <a href={DEMO.BLANK_LINK} className="dropdown-item">
+                  <a className="dropdown-item">
                     <i className="feather icon-lock" /> Lock Screen
                   </a>
                 </li>

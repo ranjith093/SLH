@@ -21,6 +21,8 @@ const validate = (values) => {
   } else if (values.status.length > 10) {
     console.log("length more");
     errors.status = "Must be 15 characters or less";
+  } else if (values.status === "select") {
+    errors.status = "plz select";
   }
 
   // console.log("error", errors);

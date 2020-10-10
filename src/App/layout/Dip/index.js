@@ -89,7 +89,9 @@ function MyVerticallyCenteredModal(props) {
       centered
     >
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">Add Dip</Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Add Carrier
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Formik

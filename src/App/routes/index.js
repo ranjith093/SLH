@@ -34,8 +34,8 @@ const routes = [
   { path: "/cloud", exact: true, name: "Cloud", component: Cloud },
   { path: "/server", exact: true, name: "Server", component: ServerComp },
   { path: "/server/:id", exact: true, name: "Server", component: ServerAdd },
-  { path: "/dip", exact: true, name: "Dip", component: Dip },
-  { path: "/dip/:id", exact: true, name: "Dip", component: DipAdd },
+  { path: "/dip", exact: true, name: "Carrier", component: Dip },
+  { path: "/dip/:id", exact: true, name: "Carrier", component: DipAdd },
 ];
 
 export default routes;

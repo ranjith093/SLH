@@ -11,14 +11,13 @@ const navLogo = (props) => {
   return (
     <Aux>
       <div className="navbar-brand header-logo">
-        <a href={DEMO.BLANK_LINK} className="b-brand">
+        <a className="b-brand">
           <div className="b-bg">
             <i className="feather icon-trending-up" />
           </div>
           <span className="b-title">SlashRTC</span>
         </a>
         <a
-          href={DEMO.BLANK_LINK}
           className={toggleClass.join(" ")}
           id="mobile-collapse"
           onClick={props.onToggleNavigation}

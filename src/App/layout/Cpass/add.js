@@ -17,14 +17,14 @@ const validate = (values) => {
   }
   if (!values.callerId) {
     errors.callerId = "Required";
-  } else if (values.callerId.length > 10) {
+  } else if (values.callerId.length > 20) {
     errors.callerId = "Must be 15 characters or less";
   }
   if (!values.domain) {
     errors.domain = "Required";
   } else if (!/^[A-Z0-9._%+-]+\.[A-Z]{2,4}[\s\S]*$/i.test(values.domain)) {
     errors.domain = "Invalid  Domain";
-  } else if (values.domain.length > 10) {
+  } else if (values.domain.length > 20) {
     errors.domain = "Must be 15 characters or less";
   }
 

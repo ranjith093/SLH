@@ -88,14 +88,14 @@ export default {
       ],
     },
     {
-      id: "dip",
-      title: "DID",
+      id: "carrier",
+      title: "Carrier",
       type: "group",
       icon: "icon-navigation",
       children: [
         {
-          id: "dip",
-          title: "Did",
+          id: "did",
+          title: "Carrier",
           type: "item",
           url: "/dip",
           icon: "feather icon-phone",

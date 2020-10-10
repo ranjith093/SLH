@@ -13,7 +13,7 @@ function MyVerticallyCenteredModal(props) {
   const onSubmit = (values) => {
     console.log("values ", { id, ...values });
 
-    const path = "cpass/addAccount";
+    const path = "cloud/addDatabase";
     const url = `http://localhost:5000/${path}`;
 
     const requestOptions = {
@@ -146,26 +146,26 @@ function Add(props) {
   const [accounts, setAccounts] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
 
-  useEffect(() => {
-    const path = `cpass/getAccounts?id=${id}`;
-    const url = `http://localhost:5000/${path}`;
+  // useEffect(() => {
+  //   const path = `cloud/getDatabase?id=${id}`;
+  //   const url = `http://localhost:5000/${path}`;
 
-    const requestOptions = {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    };
-    fetch(url, requestOptions)
-      .then((response) => response.json())
-      .then((json) => {
-        console.log("data api", json);
-        // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-        if (json.status === "fail") {
-          console.log(json.error);
-          return;
-        }
-        setAccounts(json.data);
-      });
-  }, []);
+  //   const requestOptions = {
+  //     method: "GET",
+  //     headers: { "Content-Type": "application/json" },
+  //   };
+  //   fetch(url, requestOptions)
+  //     .then((response) => response.json())
+  //     .then((json) => {
+  //       console.log("data api", json);
+  //       // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
+  //       if (json.status === "fail") {
+  //         console.log(json.error);
+  //         return;
+  //       }
+  //       setAccounts(json.data);
+  //     });
+  // }, []);
 
   return (
     <Aux>

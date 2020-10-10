@@ -49,7 +49,7 @@ function MyVerticallyCenteredModal(props) {
   const onSubmit = (values) => {
     // console.log("values ", values);
 
-    const path = "cpass/add";
+    const path = "cloud/add";
     const url = `http://localhost:5000/${path}`;
 
     const requestOptions = {

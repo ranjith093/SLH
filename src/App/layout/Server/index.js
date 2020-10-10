@@ -23,17 +23,28 @@ const validate = (values) => {
   // console.log("validate");
   const errors = {};
   if (!values.name) {
-    // console.log("name error");
     errors.name = "Required";
   } else if (values.name.length > 15) {
-    console.log("length more");
     errors.name = "Must be 15 characters or less";
   }
 
-  if (!values.url) {
-    errors.url = "Required";
-  } else if (values.url.length > 20) {
-    errors.url = "Must be 20 characters or less";
+  if (!values.ip) {
+    errors.ip = "Required";
+  }
+  // else if (
+  //   /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+  //     values.ip
+  //   )
+  // ) {
+  //   errors.ip = "Invalid IP";
+  // }
+  else if (values.ip.length > 20) {
+    errors.ip = "Must be 20 characters or less";
+  }
+  if (!values.port) {
+    errors.port = "Required";
+  } else if (values.port.length > 20) {
+    errors.port = "Must be 20 characters or less";
   }
 
   return errors;
@@ -96,7 +107,7 @@ function MyVerticallyCenteredModal(props) {
           // validationSchema={schema}
           onSubmit={onSubmit}
           initialValues={{}}
-          // validate={validate}
+          validate={validate}
         >
           {({
             handleSubmit,
@@ -129,14 +140,16 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="IP"
                     onChange={handleChange}
+                    isInvalid={!!errors.ip}
                   />
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="port">
                   <Form.Label>Port</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter Token"
+                    placeholder="Enter Port"
                     onChange={handleChange}
+                    isInvalid={!!errors.port}
                   />
                 </Form.Group>
                 {/* <Form.Group as={Col} md="6" controlId="key">

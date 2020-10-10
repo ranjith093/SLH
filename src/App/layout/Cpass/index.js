@@ -25,16 +25,30 @@ const validate = (values) => {
   if (!values.name) {
     // console.log("name error");
     errors.name = "Required";
-  } else if (values.name.length > 15) {
+  } else if (values.name.length > 10) {
     console.log("length more");
     errors.name = "Must be 15 characters or less";
   }
 
   if (!values.url) {
     errors.url = "Required";
-  } else if (values.url.length > 20) {
-    errors.url = "Must be 20 characters or less";
+  } else if (!/^[A-Z0-9._%+-]+\.[A-Z]{2,4}[\s\S]*$/i.test(values.url)) {
+    errors.url = "Invalid  URL";
   }
+  //  else if (values.url.length > 20) {
+  //   errors.url = "Must be 20 characters or less";
+  // }
+  if (!values.token) {
+    errors.token = "Required";
+  } else if (values.token.length > 20) {
+    errors.token = "Must be 20 characters or less";
+  }
+  if (!values.key) {
+    errors.key = "Required";
+  } else if (values.key.length > 20) {
+    errors.key = "Must be 20 characters or less";
+  }
+  // console.log("error", errors);
 
   return errors;
 };
@@ -116,7 +130,7 @@ function MyVerticallyCenteredModal(props) {
                     placeholder="Enter Name"
                     onChange={handleChange}
                     isValid={touched.name && !errors.name}
-                    isInvalid={!!errors.name}
+                    isInvalid={errors.name}
                   />
                   {/* <Form.Text className="text-muted">
                           We'll never share your email with anyone else.
@@ -129,6 +143,7 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="Url"
                     onChange={handleChange}
+                    isInvalid={errors.url}
                   />
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="token">
@@ -137,6 +152,7 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="Enter Token"
                     onChange={handleChange}
+                    isInvalid={errors.token}
                   />
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="key">
@@ -145,6 +161,7 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="Key"
                     onChange={handleChange}
+                    isInvalid={errors.key}
                   />
                 </Form.Group>
               </Form.Row>

@@ -3,6 +3,31 @@ import Aux from "../../../hoc/_Aux";
 import { Row, Col, Card, Table, Form, Button, Modal } from "react-bootstrap";
 import { Formik } from "formik";
 
+const validate = (values) => {
+  // console.log("validate");
+  const errors = {};
+  if (!values.number) {
+    // console.log("name error");
+    errors.number = "Required";
+  } else if (!/^[0-9]*$/i.test(values.number)) {
+    errors.number = "Invalid  URL";
+  } else if (values.number.length > 10) {
+    console.log("length more");
+    errors.number = "Must be 15 characters or less";
+  }
+  if (!values.status) {
+    // console.log("name error");
+    errors.status = "Required";
+  } else if (values.status.length > 10) {
+    console.log("length more");
+    errors.status = "Must be 15 characters or less";
+  }
+
+  // console.log("error", errors);
+
+  return errors;
+};
+
 function MyVerticallyCenteredModal(props) {
   console.log("props", { ...props });
   const { setAccounts, id, ...props1 } = props;
@@ -66,6 +91,7 @@ function MyVerticallyCenteredModal(props) {
           // validationSchema={schema}
           onSubmit={onSubmit}
           initialValues={{}}
+          validate={validate}
         >
           {({
             handleSubmit,
@@ -85,7 +111,7 @@ function MyVerticallyCenteredModal(props) {
                     placeholder="Enter Number"
                     onChange={handleChange}
                     isValid={touched.name && !errors.name}
-                    isInvalid={!!errors.name}
+                    isInvalid={!!errors.number}
                   />
                   {/* <Form.Text className="text-muted">
                           We'll never share your email with anyone else.
@@ -94,11 +120,22 @@ function MyVerticallyCenteredModal(props) {
 
                 <Form.Group as={Col} md="6" controlId="status">
                   <Form.Label>Status</Form.Label>
-                  <Form.Control
+                  {/* <Form.Control
                     type="text"
                     placeholder="Status"
                     onChange={handleChange}
-                  />
+                  /> */}
+                  <Form.Control
+                    size="sm"
+                    as="select"
+                    defaultValue="select"
+                    onChange={handleChange}
+                    isInvalid={!!errors.status}
+                  >
+                    <option value="select"> Select</option>
+                    <option value="unused">Unused</option>
+                    <option value="used"> Used</option>
+                  </Form.Control>
                 </Form.Group>
                 {/* <Form.Group as={Col} md="6" controlId="port">
                   <Form.Label>Port</Form.Label>

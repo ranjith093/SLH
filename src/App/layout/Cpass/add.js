@@ -3,6 +3,34 @@ import Aux from "../../../hoc/_Aux";
 import { Row, Col, Card, Table, Form, Button, Modal } from "react-bootstrap";
 import { Formik } from "formik";
 
+const validate = (values) => {
+  const errors = {};
+  if (!values.name) {
+    errors.name = "Required";
+  } else if (values.name.length > 10) {
+    errors.name = "Must be 15 characters or less";
+  }
+  if (!values.gateway) {
+    errors.gateway = "Required";
+  } else if (values.gateway.length > 10) {
+    errors.gateway = "Must be 15 characters or less";
+  }
+  if (!values.callerId) {
+    errors.callerId = "Required";
+  } else if (values.callerId.length > 10) {
+    errors.callerId = "Must be 15 characters or less";
+  }
+  if (!values.domain) {
+    errors.domain = "Required";
+  } else if (!/^[A-Z0-9._%+-]+\.[A-Z]{2,4}[\s\S]*$/i.test(values.domain)) {
+    errors.domain = "Invalid  Domain";
+  } else if (values.domain.length > 10) {
+    errors.domain = "Must be 15 characters or less";
+  }
+
+  return errors;
+};
+
 function MyVerticallyCenteredModal(props) {
   console.log("props", { ...props });
   const { setAccounts, id, ...props1 } = props;
@@ -68,6 +96,7 @@ function MyVerticallyCenteredModal(props) {
           // validationSchema={schema}
           onSubmit={onSubmit}
           initialValues={{}}
+          validate={validate}
         >
           {({
             handleSubmit,
@@ -94,28 +123,31 @@ function MyVerticallyCenteredModal(props) {
                         </Form.Text> */}
                 </Form.Group>
 
-                <Form.Group as={Col} md="6" controlId="url">
-                  <Form.Label>URL</Form.Label>
+                <Form.Group as={Col} md="6" controlId="gateway">
+                  <Form.Label>Gate Way</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Url"
+                    placeholder="Enter Gateway"
                     onChange={handleChange}
+                    isInvalid={!!errors.gateway}
                   />
                 </Form.Group>
-                <Form.Group as={Col} md="6" controlId="token">
-                  <Form.Label>Token</Form.Label>
+                <Form.Group as={Col} md="6" controlId="callerId">
+                  <Form.Label>Caller Id</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter Token"
+                    placeholder="Enter Caller Id"
                     onChange={handleChange}
+                    isInvalid={!!errors.callerId}
                   />
                 </Form.Group>
-                <Form.Group as={Col} md="6" controlId="key">
-                  <Form.Label>Key</Form.Label>
+                <Form.Group as={Col} md="6" controlId="domain">
+                  <Form.Label>Domain</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Key"
+                    placeholder="Enter Domain"
                     onChange={handleChange}
+                    isInvalid={!!errors.domain}
                   />
                 </Form.Group>
               </Form.Row>
@@ -202,8 +234,9 @@ function Add(props) {
               <tr>
                 <th>#</th>
                 <th>Name</th>
-                <th>Token</th>
-                <th>Url</th>
+                <th>Gateway</th>
+                <th>Caller ID</th>
+                <th>Domain</th>
               </tr>
             </thead>
             <tbody>
@@ -212,8 +245,9 @@ function Add(props) {
                   <tr key={data.name}>
                     <th scope="row">{i + 1}</th>
                     <td>{data.name}</td>
-                    <td>{data.token}</td>
-                    <td>{data.url}</td>
+                    <td>{data.gateway}</td>
+                    <td>{data.callerId}</td>
+                    <td>{data.domain}</td>
                   </tr>
                 ))}
             </tbody>

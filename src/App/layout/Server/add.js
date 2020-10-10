@@ -1,6 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Aux from "../../../hoc/_Aux";
-import { Row, Col, Card, Table, Form, Button, Modal } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Card,
+  Table,
+  Form,
+  Button,
+  Modal,
+  Dropdown,
+  DropdownButton,
+} from "react-bootstrap";
 import { Formik } from "formik";
 
 function MyVerticallyCenteredModal(props) {
@@ -112,13 +122,24 @@ function MyVerticallyCenteredModal(props) {
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="type">
                   <Form.Label>Type</Form.Label>
-                  <Form.Control
+                  {/* <Form.Control
                     type="text"
                     placeholder="Type"
                     onChange={handleChange}
-                  />
+                  /> */}
+                  <Form.Control
+                    size="sm"
+                    as="select"
+                    defaultValue="select"
+                    onChange={handleChange}
+                  >
+                    <option value="select"> Select</option>
+                    <option value="mongodb">MongoDb</option>
+                    <option value="mysql"> MYSQL</option>
+                  </Form.Control>
                 </Form.Group>
               </Form.Row>
+
               {/* <Form.Group controlId="checkBox">
                 <Form.Check
                   type="checkbox"

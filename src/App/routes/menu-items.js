@@ -47,7 +47,7 @@ export default {
       children: [
         {
           id: "dashboard",
-          title: "Clod",
+          title: "Cloud",
           type: "item",
           url: "/cloud",
           icon: "feather icon-home",

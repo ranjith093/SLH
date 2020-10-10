@@ -196,7 +196,7 @@ function App() {
           {/* <AdminLayout/> */}
           <AuthContext.Provider value={authContext}>
             <Switch>
-              {state.userToken ? <AdminLayout /> : <AuthScreen />}
+              {true ? <AdminLayout /> : <AuthScreen />}
             </Switch>
           </AuthContext.Provider>
           {/* <AuthScreen/> */}

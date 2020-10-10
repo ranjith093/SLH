@@ -12,6 +12,8 @@ const DashboardDefault = React.lazy(() =>
 
 const Cpass = React.lazy(() => import("../layout/Cpass"));
 const CpassAdd = React.lazy(() => import("../layout/Cpass/add"));
+//added cloud component
+const Cloud = React.lazy(()=> import("../layout/Cloud"));
 
 const routes = [
   {
@@ -22,6 +24,7 @@ const routes = [
   },
   { path: "/cpass", exact: true, name: "Cpass", component: Cpass },
   { path: "/cpass/:id", exact: true, name: "Cpass", component: CpassAdd },
+  { path: "/cloud", exact: true, name: "Cloud", component: Cloud },
 ];
 
 export default routes;

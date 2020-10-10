@@ -234,40 +234,40 @@ const Cloud = () => {
               cpass.map((data) => (
                 <Col key={data.id} md={6} xl={4} className="mb-4">
                   <>
-                    <Link to={{ pathname: `/cpass/${data.id}`, data: data }}>
-                      <Card.Body
-                        className="shadow-1"
-                        style={{ marginTop: "20px", background: "white" }}
-                      >
-                        <h6 className="mb-4">{data.url}</h6>
-                        <div className="row d-flex align-items-center mb-2">
-                          <div className="col-9">
-                            <h3 className="f-w-300 d-flex align-items-center m-b-0">
-                              <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "}
-                              {data.name}
-                            </h3>
-                          </div>
+                    {/* <Link to={{ pathname: `/cpass/${data.id}`, data: data }}> */}
+                    <Card.Body
+                      className="shadow-1"
+                      style={{ marginTop: "20px", background: "white" }}
+                    >
+                      <h6 className="mb-4">{data.url}</h6>
+                      <div className="row d-flex align-items-center mb-2">
+                        <div className="col-9">
+                          <h3 className="f-w-300 d-flex align-items-center m-b-0">
+                            <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "}
+                            {data.name}
+                          </h3>
+                        </div>
 
-                          {/* <div className="col-3 text-right">
+                        {/* <div className="col-3 text-right">
                             <p className="m-b-0">{data.key}</p>
                           </div> */}
-                        </div>
+                      </div>
 
+                      <div
+                        className="progress m-t-20"
+                        style={{ height: "7px" }}
+                      >
                         <div
-                          className="progress m-t-20"
-                          style={{ height: "7px" }}
-                        >
-                          <div
-                            className="progress-bar progress-c-theme"
-                            role="progressbar"
-                            style={{ width: "50%" }}
-                            aria-valuenow="50"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                          />
-                        </div>
-                      </Card.Body>
-                    </Link>
+                          className="progress-bar progress-c-theme"
+                          role="progressbar"
+                          style={{ width: "50%" }}
+                          aria-valuenow="50"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        />
+                      </div>
+                    </Card.Body>
+                    {/* </Link> */}
                   </>
                 </Col>
               ))}

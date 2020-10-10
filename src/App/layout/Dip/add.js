@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Aux from "../../../hoc/_Aux";
-import { Row, Col, Card, Table, Form, Button, Modal } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Card,
+  Table,
+  Form,
+  Button,
+  Modal,
+  Accordion,
+} from "react-bootstrap";
 import { Formik } from "formik";
 
 const validate = (values) => {
@@ -14,6 +23,41 @@ const validate = (values) => {
   } else if (values.number.length > 10) {
     console.log("length more");
     errors.number = "Must be 15 characters or less";
+  }
+  if (!values.status) {
+    // console.log("name error");
+    errors.status = "Required";
+  } else if (values.status.length > 10) {
+    console.log("length more");
+    errors.status = "Must be 15 characters or less";
+  } else if (values.status === "select") {
+    errors.status = "plz select";
+  }
+
+  // console.log("error", errors);
+
+  return errors;
+};
+const validateRange = (values) => {
+  // console.log("validate");
+  const errors = {};
+  if (!values.number) {
+    // console.log("name error");
+    errors.number = "Required";
+  } else if (!/^[0-9]*$/i.test(values.number)) {
+    errors.number = "Invalid  URL";
+  } else if (values.number.length > 10) {
+    console.log("length more");
+    errors.number = "Must be 15 characters or less";
+  }
+  if (!values.numberTo) {
+    // console.log("name error");
+    errors.numberTo = "Required";
+  } else if (!/^[0-9]*$/i.test(values.numberTo)) {
+    errors.numberTo = "Invalid  URL";
+  } else if (values.numberTo.length > 10) {
+    console.log("length more");
+    errors.numberTo = "Must be 15 characters or less";
   }
   if (!values.status) {
     // console.log("name error");
@@ -78,6 +122,48 @@ function MyVerticallyCenteredModal(props) {
         // ]);
       });
   };
+  const onSubmitRange = (values) => {
+    console.log("values ", { id, ...values });
+
+    const path = "dip/addNumber";
+    const url = `http://localhost:5000/${path}`;
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, ...values }),
+    };
+    return fetch(url, requestOptions)
+      .then((response) => response.json())
+      .then((json) => {
+        console.log("data api", json);
+        // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
+        if (json.status === "fail") {
+          console.log(json.error);
+          return;
+        }
+        const entry = {
+          id: json.id,
+        };
+
+        // setCpass(entry);
+
+        // setAccounts((preState) => [...preState, Object.assign(entry, values)]);
+        setAccounts((preState) => {
+          if (preState) {
+            return [...preState, values];
+          }
+          return [values];
+        });
+        props.onHide();
+
+        // props.setCpass((preState) => [
+        //   ...preState,
+        //   Object.assign(entry, values),
+        // ]);
+      });
+  };
+
   return (
     <Modal
       {...props1}
@@ -89,86 +175,137 @@ function MyVerticallyCenteredModal(props) {
         <Modal.Title id="contained-modal-title-vcenter">Add Number</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Formik
-          // validationSchema={schema}
-          onSubmit={onSubmit}
-          initialValues={{}}
-          validate={validate}
-        >
-          {({
-            handleSubmit,
-            handleChange,
-            handleBlur,
-            values,
-            touched,
-            isValid,
-            errors,
-          }) => (
-            <Form onSubmit={handleSubmit}>
-              <Form.Row>
-                <Form.Group as={Col} md="6" controlId="number">
-                  <Form.Label>Number</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter Number"
-                    onChange={handleChange}
-                    isValid={touched.name && !errors.name}
-                    isInvalid={!!errors.number}
-                  />
-                  {/* <Form.Text className="text-muted">
-                          We'll never share your email with anyone else.
-                        </Form.Text> */}
-                </Form.Group>
+        <Accordion defaultActiveKey="0">
+          <Card>
+            {/* <Card.Header> */}
+            <Accordion.Toggle as={Button} variant="link" eventKey="0">
+              Single Entry
+            </Accordion.Toggle>
+            {/* </Card.Header> */}
+            <Accordion.Collapse eventKey="0">
+              <Formik
+                // validationSchema={schema}
+                onSubmit={onSubmit}
+                initialValues={{}}
+                validate={validate}
+              >
+                {({
+                  handleSubmit,
+                  handleChange,
+                  handleBlur,
+                  values,
+                  touched,
+                  isValid,
+                  errors,
+                }) => (
+                  <Form onSubmit={handleSubmit}>
+                    <Form.Row>
+                      <Form.Group as={Col} md="6" controlId="number">
+                        <Form.Label>Number</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter Number"
+                          onChange={handleChange}
+                          isValid={touched.name && !errors.name}
+                          isInvalid={!!errors.number}
+                        />
+                      </Form.Group>
 
-                <Form.Group as={Col} md="6" controlId="status">
-                  <Form.Label>Status</Form.Label>
-                  {/* <Form.Control
-                    type="text"
-                    placeholder="Status"
-                    onChange={handleChange}
-                  /> */}
-                  <Form.Control
-                    size="sm"
-                    as="select"
-                    defaultValue="select"
-                    onChange={handleChange}
-                    isInvalid={!!errors.status}
-                  >
-                    <option value="select"> Select</option>
-                    <option value="unused">Unused</option>
-                    <option value="used"> Used</option>
-                  </Form.Control>
-                </Form.Group>
-                {/* <Form.Group as={Col} md="6" controlId="port">
-                  <Form.Label>Port</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter Port"
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-                <Form.Group as={Col} md="6" controlId="type">
-                  <Form.Label>Type</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Type"
-                    onChange={handleChange}
-                  />
-                </Form.Group> */}
-              </Form.Row>
-              {/* <Form.Group controlId="checkBox">
-                <Form.Check
-                  type="checkbox"
-                  label="Check me out"
-                  onChange={handleChange}
-                />
-              </Form.Group> */}
-              <Button variant="primary" type="submit">
-                Submit
-              </Button>
-            </Form>
-          )}
-        </Formik>
+                      <Form.Group as={Col} md="6" controlId="status">
+                        <Form.Label>Status</Form.Label>
+
+                        <Form.Control
+                          size="sm"
+                          as="select"
+                          defaultValue="select"
+                          onChange={handleChange}
+                          isInvalid={!!errors.status}
+                        >
+                          <option value="select"> Select</option>
+                          <option value="unused">Unused</option>
+                          <option value="used"> Used</option>
+                        </Form.Control>
+                      </Form.Group>
+                    </Form.Row>
+
+                    <Button variant="primary" type="submit">
+                      Submit
+                    </Button>
+                  </Form>
+                )}
+              </Formik>
+            </Accordion.Collapse>
+          </Card>
+          <Card>
+            <Accordion.Toggle as={Button} variant="link" eventKey="1">
+              Range Entry
+            </Accordion.Toggle>
+
+            <Accordion.Collapse eventKey="1">
+              <Formik
+                // validationSchema={schema}
+                onSubmit={onSubmitRange}
+                initialValues={{}}
+                validate={validateRange}
+              >
+                {({
+                  handleSubmit,
+                  handleChange,
+                  handleBlur,
+                  values,
+                  touched,
+                  isValid,
+                  errors,
+                }) => (
+                  <Form onSubmit={handleSubmit}>
+                    <Form.Row>
+                      <Form.Group as={Col} md="6" controlId="number">
+                        <Form.Label>Number From</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter Number"
+                          onChange={handleChange}
+                          isValid={touched.name && !errors.name}
+                          isInvalid={!!errors.number}
+                        />
+                      </Form.Group>
+                      <Form.Group as={Col} md="6" controlId="numberTo">
+                        <Form.Label>Number To</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter Number"
+                          onChange={handleChange}
+                          isValid={touched.name && !errors.name}
+                          isInvalid={!!errors.numberTo}
+                        />
+                      </Form.Group>
+
+                      <Form.Group as={Col} md="6" controlId="status">
+                        <Form.Label>Status</Form.Label>
+
+                        <Form.Control
+                          size="sm"
+                          as="select"
+                          defaultValue="select"
+                          onChange={handleChange}
+                          isInvalid={!!errors.status}
+                        >
+                          <option value="select"> Select</option>
+                          <option value="unused">Unused</option>
+                          <option value="used"> Used</option>
+                        </Form.Control>
+                      </Form.Group>
+                    </Form.Row>
+
+                    <Button variant="primary" type="submit">
+                      Submit
+                    </Button>
+                  </Form>
+                )}
+              </Formik>
+            </Accordion.Collapse>
+          </Card>
+        </Accordion>
       </Modal.Body>
     </Modal>
   );

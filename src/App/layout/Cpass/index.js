@@ -89,9 +89,7 @@ function MyVerticallyCenteredModal(props) {
       centered
     >
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          Modal heading
-        </Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">Add cpass</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Formik
@@ -150,13 +148,13 @@ function MyVerticallyCenteredModal(props) {
                   />
                 </Form.Group>
               </Form.Row>
-              <Form.Group controlId="checkBox">
+              {/* <Form.Group controlId="checkBox">
                 <Form.Check
                   type="checkbox"
                   label="Check me out"
                   onChange={handleChange}
                 />
-              </Form.Group>
+              </Form.Group> */}
               <Button variant="primary" type="submit">
                 Submit
               </Button>
@@ -192,11 +190,6 @@ const Cpass = () => {
         setCpass(json);
       });
   }, []);
-
-  const updateCpass = ({ entry, values }) => {
-    console.log("values", values);
-    // setCpass((preState) => [...preState, Object.assign(entry, values)]);
-  };
 
   return (
     <Aux>

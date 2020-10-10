@@ -13,7 +13,14 @@ const DashboardDefault = React.lazy(() =>
 const Cpass = React.lazy(() => import("../layout/Cpass"));
 const CpassAdd = React.lazy(() => import("../layout/Cpass/add"));
 //added cloud component
-const Cloud = React.lazy(()=> import("../layout/Cloud"));
+const Cloud = React.lazy(() => import("../layout/Cloud"));
+
+//Server
+const ServerComp = React.lazy(() => import("../layout/Server"));
+const ServerAdd = React.lazy(() => import("../layout/Server/add"));
+//Dip
+const Dip = React.lazy(() => import("../layout/Dip"));
+const DipAdd = React.lazy(() => import("../layout/Dip/add"));
 
 const routes = [
   {
@@ -25,6 +32,10 @@ const routes = [
   { path: "/cpass", exact: true, name: "Cpass", component: Cpass },
   { path: "/cpass/:id", exact: true, name: "Cpass", component: CpassAdd },
   { path: "/cloud", exact: true, name: "Cloud", component: Cloud },
+  { path: "/server", exact: true, name: "Server", component: ServerComp },
+  { path: "/server/:id", exact: true, name: "Server", component: ServerAdd },
+  { path: "/dip", exact: true, name: "Dip", component: Dip },
+  { path: "/dip/:id", exact: true, name: "Dip", component: DipAdd },
 ];
 
 export default routes;

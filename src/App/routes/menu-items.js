@@ -39,5 +39,77 @@ export default {
         },
       ],
     },
+    {
+      id: "cloud",
+      title: "Cloud",
+      type: "group",
+      icon: "icon-navigation",
+      children: [
+        {
+          id: "dashboard",
+          title: "Clod",
+          type: "item",
+          url: "/cloud",
+          icon: "feather icon-home",
+          children: [
+            {
+              id: "dashboard",
+              title: "Cpass id",
+              type: "item",
+              url: "/:id",
+              icon: "feather icon-home",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: "billing",
+      title: "Billing",
+      type: "group",
+      icon: "icon-navigation",
+      children: [
+        {
+          id: "billing",
+          title: "Billing",
+          type: "item",
+          url: "/billing",
+          icon: "feather icon-home",
+          children: [
+            {
+              id: "dashboard",
+              title: "Cpass id",
+              type: "item",
+              url: "/:id",
+              icon: "feather icon-home",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: "phone",
+      title: "Phone",
+      type: "group",
+      icon: "icon-navigation",
+      children: [
+        {
+          id: "phone",
+          title: "Phone",
+          type: "item",
+          url: "/phone",
+          icon: "feather icon-home",
+          children: [
+            {
+              id: "dashboard",
+              title: "Cpass id",
+              type: "item",
+              url: "/:id",
+              icon: "feather icon-home",
+            },
+          ],
+        },
+      ],
+    },
   ],
 };

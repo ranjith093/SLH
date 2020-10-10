@@ -31,7 +31,7 @@ class NavBar extends Component {
             <a
               className={toggleClass.join(" ")}
               id="mobile-collapse1"
-              href={DEMO.BLANK_LINK}
+              // href={DEMO.BLANK_LINK}
               onClick={this.props.onToggleNavigation}
             >
               <span />

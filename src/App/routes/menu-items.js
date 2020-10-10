@@ -47,7 +47,7 @@ export default {
       children: [
         {
           id: "dashboard",
-          title: "Clod",
+          title: "Cloud",
           type: "item",
           url: "/cloud",
           icon: "feather icon-home",
@@ -55,6 +55,54 @@ export default {
             {
               id: "dashboard",
               title: "Cpass id",
+              type: "item",
+              url: "/:id",
+              icon: "feather icon-home",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: "server",
+      title: "Server",
+      type: "group",
+      icon: "icon-navigation",
+      children: [
+        {
+          id: "server",
+          title: "Server",
+          type: "item",
+          url: "/server",
+          icon: "feather icon-home",
+          children: [
+            {
+              id: "dashboard",
+              title: "server id",
+              type: "item",
+              url: "/:id",
+              icon: "feather icon-home",
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: "dip",
+      title: "DIP",
+      type: "group",
+      icon: "icon-navigation",
+      children: [
+        {
+          id: "dip",
+          title: "DIP",
+          type: "item",
+          url: "/dip",
+          icon: "feather icon-home",
+          children: [
+            {
+              id: "dashboard",
+              title: "dip id",
               type: "item",
               url: "/:id",
               icon: "feather icon-home",

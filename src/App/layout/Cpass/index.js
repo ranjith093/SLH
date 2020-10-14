@@ -263,7 +263,7 @@ const Cpass = () => {
                         <div className="row d-flex align-items-center mb-2">
                           <div className="col-9">
                             <h3 className="f-w-300 d-flex align-items-center m-b-0">
-                              <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "}
+                              {/* <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "} */}
                               {data.name}
                             </h3>
                           </div>

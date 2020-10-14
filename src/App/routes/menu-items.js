@@ -15,5 +15,20 @@ export default {
         },
       ],
     },
+    {
+      id: "create",
+      title: "Create",
+      type: "group",
+      icon: "icon-navigation",
+      children: [
+        {
+          id: "create",
+          title: "Create User",
+          type: "item",
+          url: "/createUser",
+          icon: "feather icon-user",
+        },
+      ],
+    },
   ],
 };

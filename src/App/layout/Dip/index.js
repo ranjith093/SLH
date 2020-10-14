@@ -264,7 +264,7 @@ const Cpass = () => {
                       <div className="row d-flex align-items-center mb-2">
                         <div className="col-9">
                           <h3 className="f-w-300 d-flex align-items-center m-b-0">
-                            <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "}
+                            {/* <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "} */}
                             {data.name}
                           </h3>
                         </div>
@@ -273,13 +273,36 @@ const Cpass = () => {
                             <p className="m-b-0">{data.key}</p>
                           </div> */}
                       </div>
-                      <Row>
-                        <h6 className="ml-4">{data.ip}</h6>
-                        <h6 className="ml-1">:</h6>
-                        <h6 className="ml-1">{data.port}</h6>
-                        <h6 className="ml-5">{data.carrier}</h6>
+                      <Row className=" flex items-center justify-between pl-2">
+                        <div>
+                          <Row>
+                            <h6 className="ml-4">{data.ip}</h6>
+                            <h6 className="ml-1">:</h6>
+                            <h6 className="ml-1">{data.port}</h6>
+                            <h6 className="ml-2">{data.carrier}</h6>
+                          </Row>
+                        </div>
+
+                        <Row className="pr-3">
+                          <Link
+                            to={{
+                              pathname: `/did/phone/${data.id}`,
+                              data: data,
+                            }}
+                          >
+                            <i className="feather icon-phone text-c-green f-30 m-r-5 mr-3" />
+                          </Link>
+                          <Link
+                            to={{
+                              pathname: `/did/account/${data.id}`,
+                              data: data,
+                            }}
+                          >
+                            <i className="feather icon-user text-c-green f-30 m-r-5" />
+                          </Link>
+                        </Row>
                       </Row>
-                      <Row className="mt-4  flex justify-end">
+                      {/* <Row className="mt-4  flex justify-end">
                         <Link
                           to={{ pathname: `/did/phone/${data.id}`, data: data }}
                         >
@@ -293,7 +316,7 @@ const Cpass = () => {
                         >
                           <i className="feather icon-user text-c-green f-30 m-r-5" />
                         </Link>
-                      </Row>
+                      </Row> */}
                       <div
                         className="progress m-t-20"
                         style={{ height: "7px" }}

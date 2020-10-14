@@ -29,6 +29,13 @@ const Settings = React.lazy(() => import("../layout/Settings"));
 //NLp
 const Nlp = React.lazy(() => import("../layout/Nlp"));
 
+//Media Server
+
+const MediaServer = React.lazy(() => import("../layout/MediaServer"));
+
+//create user
+const CreateUser = React.lazy(() => import("../layout/CreateUser"));
+
 const routes = [
   {
     path: "/dashboard/default",
@@ -51,6 +58,18 @@ const routes = [
   },
   { path: "/settings", exact: true, name: "Settings", component: Settings },
   { path: "/nlp", exact: true, name: "Nlp", component: Nlp },
+  {
+    path: "/mediaServer",
+    exact: true,
+    name: "MediaServer",
+    component: MediaServer,
+  },
+  {
+    path: "/createUser",
+    exact: true,
+    name: "Create user",
+    component: CreateUser,
+  },
 ];
 
 export default routes;

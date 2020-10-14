@@ -104,7 +104,9 @@ function MyVerticallyCenteredModal(props) {
       centered
     >
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">Add NLP</Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Add Media Server
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Formik
@@ -159,22 +161,35 @@ function MyVerticallyCenteredModal(props) {
                     isInvalid={!!errors.port}
                   />
                 </Form.Group>
-                {/* <Form.Group as={Col} md="6" controlId="key">
-                  <Form.Label>Key</Form.Label>
+                <Form.Group as={Col} md="6" controlId="password">
+                  <Form.Label>Password</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Key"
+                    placeholder="password"
                     onChange={handleChange}
+                    isInvalid={!!errors.password}
                   />
-                </Form.Group> */}
+                </Form.Group>
+                <Form.Group as={Col} md="6" controlId="recordingPath">
+                  <Form.Label>Recording Path</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="recordingPath"
+                    onChange={handleChange}
+                    isInvalid={!!errors.recordingPath}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} md="6" controlId="audioStrem">
+                  <Form.Label>Audio Strem port</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="password"
+                    onChange={handleChange}
+                    isInvalid={!!errors.password}
+                  />
+                </Form.Group>
               </Form.Row>
-              {/* <Form.Group controlId="checkBox">
-                <Form.Check
-                  type="checkbox"
-                  label="Check me out"
-                  onChange={handleChange}
-                />
-              </Form.Group> */}
+
               <Button variant="primary" type="submit">
                 Submit
               </Button>
@@ -229,7 +244,7 @@ const Cpass = () => {
       <MyVerticallyCenteredModal
         show={modalShow}
         onHide={() => setModalShow(false)}
-        setAccounts={setCpass}
+        setCpass={setCpass}
         nlp={nlp}
       />
       <MyVerticallyCenteredModalGet
@@ -250,7 +265,7 @@ const Cpass = () => {
       />
       <Card>
         <Card.Header>
-          <Card.Title as="h5">NLP</Card.Title>
+          <Card.Title as="h5">Media Server</Card.Title>
           {/* <span className="d-block m-t-5">
             use props <code>hover</code> with <code>Table</code> component
           </span> */}

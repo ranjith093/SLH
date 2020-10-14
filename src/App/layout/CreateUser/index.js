@@ -216,88 +216,167 @@ const Cpass = () => {
 
   return (
     <Aux>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-        }}
-      >
-        <Button variant="primary" onClick={() => setModalShow(true)}>
-          Add
-        </Button>
-      </div>
-      <MyVerticallyCenteredModal
-        show={modalShow}
-        onHide={() => setModalShow(false)}
-        setAccounts={setCpass}
-        nlp={nlp}
-      />
-      <MyVerticallyCenteredModalGet
-        title="Are you sure want to Delete ?"
-        show={deletConfirm}
-        onHide={() => setDeletConfirm(false)}
-        body={
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            <Button>Yes</Button>
-            <Button>No</Button>
-          </div>
-        }
-      />
-      <Card>
-        <Card.Header>
-          <Card.Title as="h5">NLP</Card.Title>
-          {/* <span className="d-block m-t-5">
-            use props <code>hover</code> with <code>Table</code> component
-          </span> */}
-        </Card.Header>
-        <Card.Body>
-          <Table responsive hover>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>IP</th>
-                <th>Port</th>
+      <Row>
+        <Col>
+          <Card>
+            <Card.Header>
+              <Card.Title as="h5">Basic User</Card.Title>
+            </Card.Header>
+            <Card.Body>
+              <Form>
+                <Row>
+                  <Form.Group as={Col} md="6" controlId="name">
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control type="text" placeholder="Enter Name" />
+                    {/* <Form.Text className="text-muted">
+                    We'll never share your email with anyone else.
+                  </Form.Text> */}
+                  </Form.Group>
 
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cpass &&
-                cpass.map((data, i) => (
-                  <tr key={data.name}>
-                    <th scope="row">{i + 1}</th>
-                    <td>{data.name}</td>
-                    <td>{data.ip}</td>
-                    <td>{data.port}</td>
-                    <td style={{}}>
-                      <i
-                        className="feather icon-edit
-                       auth-icon "
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          setnlp(data);
-                          setModalShow(true);
-                        }}
+                  <Form.Group as={Col} md="6" controlId="phone">
+                    <Form.Label>Phone</Form.Label>
+                    <Form.Control type="text" placeholder="Phone" />
+                  </Form.Group>
+                  <Form.Group as={Col} md="6" controlId="company">
+                    <Form.Label>Company</Form.Label>
+                    <Form.Control type="text" placeholder="Company" />
+                  </Form.Group>
+                  {/* <Form.Group controlId="formBasicChecbox">
+                    <Form.Check type="checkbox" label="Check me out" />
+                  </Form.Group> */}
+                </Row>
+                <Button variant="primary">Submit</Button>
+              </Form>
+            </Card.Body>
+          </Card>
+          <Card>
+            <Card.Header>
+              <Card.Title as="h5">Options</Card.Title>
+            </Card.Header>
+
+            <Card.Body>
+              <Form>
+                <Row>
+                  <Col md={12}>
+                    {/* <h5>Options</h5>
+                    <hr /> */}
+                    <Form.Group>
+                      <Form.Check
+                        custom
+                        type="checkbox"
+                        id="dialer"
+                        label="Dialer"
                       />
-                      <i
-                        className="feather icon-trash
-                       auth-icon ml-3"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => setDeletConfirm(true)}
+                    </Form.Group>
+                    <Form.Group>
+                      <Form.Check custom type="checkbox" id="vb" label="VB" />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Button variant="primary">Submit</Button>
+              </Form>
+            </Card.Body>
+          </Card>
+
+          <Card>
+            <Card.Header>
+              <Card.Title as="h5">Cpass</Card.Title>
+            </Card.Header>
+
+            <Card.Body>
+              <Form>
+                <Row>
+                  <Col md={12}>
+                    {/* <h5>Options</h5>
+                    <hr /> */}
+                    <Form.Group>
+                      <Form.Check
+                        inline
+                        custom
+                        type="radio"
+                        label="cpass 1"
+                        name="supportedRadio"
+                        id="supportedRadio21"
                       />
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
+                      <Form.Check
+                        inline
+                        custom
+                        type="radio"
+                        label="cpass 2"
+                        name="supportedRadio"
+                        id="supportedRadio22"
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Button variant="primary">Submit</Button>
+              </Form>
+            </Card.Body>
+          </Card>
+
+          <Card>
+            <Card.Header>
+              <Card.Title as="h5">Dialer</Card.Title>
+            </Card.Header>
+
+            <Card.Body>
+              <Form>
+                <Row>
+                  <Col md={12}>
+                    {/* <h5>Licence</h5>
+                    <hr /> */}
+                    <Form.Group controlId="licence">
+                      <Form.Label>Licence</Form.Label>
+                      <Form.Control type="text" placeholder="licence" />
+                    </Form.Group>
+                  </Col>
+                  <Col md={12}>
+                    <h5>Database</h5>
+                    <hr />
+                    <Form.Group>
+                      <Form.Check
+                        inline
+                        custom
+                        type="radio"
+                        label="mongo"
+                        name="supportedRadio"
+                        id="supportedRadio23"
+                      />
+                      <Form.Check
+                        inline
+                        custom
+                        type="radio"
+                        label="sql"
+                        name="supportedRadio"
+                        id="supportedRadio24"
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={12}>
+                    <h5>Features</h5>
+                    <hr />
+                    <Form.Group>
+                      <Form.Check
+                        custom
+                        type="checkbox"
+                        id="dialer"
+                        label="Dialer"
+                      />
+                      <Form.Check
+                        custom
+                        type="checkbox"
+                        id="dialer"
+                        label="Dialer"
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Button variant="primary">Submit</Button>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </Aux>
   );
 };

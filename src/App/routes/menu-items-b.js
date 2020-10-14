@@ -46,6 +46,21 @@ export default {
       ],
     },
     {
+      id: "mediaServer",
+      title: "Media Server",
+      type: "group",
+      icon: "icon-settings",
+      children: [
+        {
+          id: "mediaServer",
+          title: "mediaServer",
+          type: "item",
+          url: "/mediaServer",
+          icon: "feather icon-settings",
+        },
+      ],
+    },
+    {
       id: "cpass",
       title: "Cpass",
       type: "group",
@@ -213,5 +228,21 @@ export default {
     //     },
     //   ],
     // },
+
+    {
+      id: "create",
+      title: "Create",
+      type: "group",
+      icon: "icon-navigation",
+      children: [
+        {
+          id: "create",
+          title: "Create User",
+          type: "item",
+          url: "/createUser",
+          icon: "feather icon-user",
+        },
+      ],
+    },
   ],
 };

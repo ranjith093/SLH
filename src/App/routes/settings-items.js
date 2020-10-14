@@ -29,6 +29,12 @@ export default {
           type: "group",
           icon: "icon-navigation",
         },
+        {
+          id: "mediaServer",
+          title: "Media Server",
+          type: "group",
+          icon: "icon-navigation",
+        },
       ],
     },
   ],

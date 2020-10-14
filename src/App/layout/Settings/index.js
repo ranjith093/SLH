@@ -44,17 +44,20 @@ function Index() {
 
             {settingsItem &&
               settingsItem.items.map((data) => (
-                <div
-                  className="lg:flex flex-row items-center ml-3"
-                  key={data.id}
-                >
-                  <div className="capitalize lg:w-56 lg:flex justify-center items-center">
-                    {data.title}
+                <>
+                  <div
+                    className="lg:flex flex-row items-center ml-3"
+                    key={data.id}
+                  >
+                    <div className="capitalize lg:w-56 lg:flex justify-center items-center">
+                      {data.title}
+                    </div>
+                    <div className="flex flex-wrap">
+                      <SettingItem items={data.settings} />
+                    </div>
                   </div>
-                  <div className="flex flex-wrap">
-                    <SettingItem items={data.settings} />
-                  </div>
-                </div>
+                  {/* <div className="h-1 rounded-sm w-full bg-gray-300 " /> */}
+                </>
               ))}
           </Row>
         </Col>

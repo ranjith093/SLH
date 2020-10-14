@@ -30,19 +30,19 @@ const validate = (values) => {
 
   if (!values.ip) {
     errors.ip = "Required";
-  }
-  // else if (
-  //   /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
-  //     values.ip
-  //   )
-  // ) {
-  //   errors.ip = "Invalid IP";
-  // }
-  else if (values.ip.length > 20) {
+  } else if (
+    !/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+      values.ip
+    )
+  ) {
+    errors.ip = "Invalid  IP ";
+  } else if (values.ip.length > 20) {
     errors.ip = "Must be 20 characters or less";
   }
   if (!values.port) {
     errors.port = "Required";
+  } else if (!/^([0-9]{1,5})$/.test(values.port)) {
+    errors.port = "Invalid  port ";
   } else if (values.port.length > 20) {
     errors.port = "Must be 20 characters or less";
   }
@@ -138,7 +138,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Label>IP</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="IP"
+                    placeholder="192.168.0.1"
                     onChange={handleChange}
                     isInvalid={!!errors.ip}
                   />
@@ -147,7 +147,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Label>Port</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter Port"
+                    placeholder="22"
                     onChange={handleChange}
                     isInvalid={!!errors.port}
                   />

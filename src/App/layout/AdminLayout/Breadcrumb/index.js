@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 
 import config from "../../../../config";
 // import navigation from "../../../../menu-items";
-import navigation from "../../../routes/menu-items";
+// import navigation from "../../../routes/menu-items";
+import navigation from "../../../routes/menu-items-b";
 
 import DEMO from "../../../../store/constant";
 import Aux from "../../../../hoc/_Aux";

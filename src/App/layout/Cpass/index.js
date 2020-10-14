@@ -129,33 +129,33 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter Name"
+                    placeholder="slashrtc"
                     onChange={handleChange}
-                    isValid={touched.name && !errors.name}
+                    // isValid={touched.name && !errors.name}
                     isInvalid={errors.name}
                   />
                 </Form.Group>
-                <MyFormGroup
+                {/* <MyFormGroup
                   errors={errors}
                   handleChange={handleChange}
                   name="url"
-                />
-                {/* <Form.Group as={Col} md="6" controlId="url">
+                /> */}
+                <Form.Group as={Col} md="6" controlId="url">
                   <Form.Label>URL</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Url"
+                    placeholder="www.slashrtc.com"
                     onChange={handleChange}
                     isInvalid={errors.url}
                   />
-                </Form.Group> */}
+                </Form.Group>
                 <Form.Group as={Col} md="6" controlId="token">
                   <Form.Label>Token</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Enter Token"
                     onChange={handleChange}
-                    isInvalid={errors.token}
+                    // isInvalid={errors.token}
                   />
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="key">
@@ -164,7 +164,7 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="Key"
                     onChange={handleChange}
-                    isInvalid={errors.key}
+                    // isInvalid={errors.key}
                   />
                 </Form.Group>
               </Form.Row>

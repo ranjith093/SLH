@@ -29,13 +29,24 @@ const validate = (values) => {
     console.log("length more");
     errors.name = "Must be 15 characters or less";
   }
-
-  if (!values.url) {
-    errors.url = "Required";
-  } else if (values.url.length > 20) {
-    errors.url = "Must be 20 characters or less";
+  if (!values.ip) {
+    errors.ip = "Required";
+  } else if (
+    !/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
+      values.ip
+    )
+  ) {
+    errors.ip = "Invalid  IP ";
+  } else if (values.ip.length > 20) {
+    errors.ip = "Must be 20 characters or less";
   }
-
+  if (!values.port) {
+    errors.port = "Required";
+  } else if (!/^([0-9]{1,5})$/.test(values.port)) {
+    errors.port = "Invalid  port ";
+  } else if (values.port.length > 20) {
+    errors.port = "Must be 20 characters or less";
+  }
   return errors;
 };
 
@@ -98,7 +109,7 @@ function MyVerticallyCenteredModal(props) {
           // validationSchema={schema}
           onSubmit={onSubmit}
           initialValues={{}}
-          // validate={validate}
+          validate={validate}
         >
           {({
             handleSubmit,
@@ -124,29 +135,31 @@ function MyVerticallyCenteredModal(props) {
                           We'll never share your email with anyone else.
                         </Form.Text> */}
                 </Form.Group>
-                <Form.Group as={Col} md="6" controlId="carrier">
+                {/* <Form.Group as={Col} md="6" controlId="carrier">
                   <Form.Label>Carrier</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Carrier"
                     onChange={handleChange}
                   />
-                </Form.Group>
+                </Form.Group> */}
 
                 <Form.Group as={Col} md="6" controlId="ip">
                   <Form.Label>IP</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="IP"
+                    placeholder="192.168.0.1"
                     onChange={handleChange}
+                    isInvalid={!!errors.ip}
                   />
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="port">
                   <Form.Label>Port</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Enter Token"
+                    placeholder="22"
                     onChange={handleChange}
+                    isInvalid={!!errors.port}
                   />
                 </Form.Group>
                 {/* <Form.Group as={Col} md="6" controlId="key">
@@ -244,45 +257,57 @@ const Cpass = () => {
               cpass.map((data) => (
                 <Col key={data.id} md={6} xl={4} className="mb-4">
                   <>
-                    <Link to={{ pathname: `/dip/${data.id}`, data: data }}>
-                      <Card.Body
-                        className="shadow-1"
-                        style={{ marginTop: "20px", background: "white" }}
-                      >
-                        <div className="row d-flex align-items-center mb-2">
-                          <div className="col-9">
-                            <h3 className="f-w-300 d-flex align-items-center m-b-0">
-                              <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "}
-                              {data.name}
-                            </h3>
-                          </div>
+                    <Card.Body
+                      className="shadow-1"
+                      style={{ marginTop: "20px", background: "white" }}
+                    >
+                      <div className="row d-flex align-items-center mb-2">
+                        <div className="col-9">
+                          <h3 className="f-w-300 d-flex align-items-center m-b-0">
+                            <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "}
+                            {data.name}
+                          </h3>
+                        </div>
 
-                          {/* <div className="col-3 text-right">
+                        {/* <div className="col-3 text-right">
                             <p className="m-b-0">{data.key}</p>
                           </div> */}
-                        </div>
-                        <Row>
-                          <h6 className="ml-4">{data.ip}</h6>
-                          <h6 className="ml-1">:</h6>
-                          <h6 className="ml-1">{data.port}</h6>
-                          <h6 className="ml-5">{data.carrier}</h6>
-                        </Row>
-
-                        <div
-                          className="progress m-t-20"
-                          style={{ height: "7px" }}
+                      </div>
+                      <Row>
+                        <h6 className="ml-4">{data.ip}</h6>
+                        <h6 className="ml-1">:</h6>
+                        <h6 className="ml-1">{data.port}</h6>
+                        <h6 className="ml-5">{data.carrier}</h6>
+                      </Row>
+                      <Row className="mt-4  flex justify-end">
+                        <Link
+                          to={{ pathname: `/did/phone/${data.id}`, data: data }}
                         >
-                          <div
-                            className="progress-bar progress-c-theme"
-                            role="progressbar"
-                            style={{ width: "50%" }}
-                            aria-valuenow="50"
-                            aria-valuemin="0"
-                            aria-valuemax="100"
-                          />
-                        </div>
-                      </Card.Body>
-                    </Link>
+                          <i className="feather icon-phone text-c-green f-30 m-r-5 mr-3" />
+                        </Link>
+                        <Link
+                          to={{
+                            pathname: `/did/account/${data.id}`,
+                            data: data,
+                          }}
+                        >
+                          <i className="feather icon-user text-c-green f-30 m-r-5" />
+                        </Link>
+                      </Row>
+                      <div
+                        className="progress m-t-20"
+                        style={{ height: "7px" }}
+                      >
+                        <div
+                          className="progress-bar progress-c-theme"
+                          role="progressbar"
+                          style={{ width: "50%" }}
+                          aria-valuenow="50"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        />
+                      </div>
+                    </Card.Body>
                   </>
                 </Col>
               ))}

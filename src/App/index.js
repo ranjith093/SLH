@@ -20,6 +20,8 @@ import routes from "../route";
 
 import AuthScreen from "./layout/Auth";
 
+import "../assets/tw/styles.css";
+
 const AdminLayout = Loadable({
   loader: () => import("./layout/AdminLayout"),
   loading: Loader,

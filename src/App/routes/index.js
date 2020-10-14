@@ -21,9 +21,13 @@ const ServerAdd = React.lazy(() => import("../layout/Server/add"));
 //Dip
 const Dip = React.lazy(() => import("../layout/Dip"));
 const DipAdd = React.lazy(() => import("../layout/Dip/add"));
+const DipAddAccount = React.lazy(() => import("../layout/Dip/addAccount"));
 //Settings
 
 const Settings = React.lazy(() => import("../layout/Settings"));
+
+//NLp
+const Nlp = React.lazy(() => import("../layout/Nlp/add"));
 
 const routes = [
   {
@@ -38,8 +42,15 @@ const routes = [
   { path: "/server", exact: true, name: "Server", component: ServerComp },
   { path: "/server/:id", exact: true, name: "Server", component: ServerAdd },
   { path: "/dip", exact: true, name: "Carrier", component: Dip },
-  { path: "/dip/:id", exact: true, name: "Carrier", component: DipAdd },
+  { path: "/did/phone/:id", exact: true, name: "Carrier", component: DipAdd },
+  {
+    path: "/did/account/:id",
+    exact: true,
+    name: "Carrier",
+    component: DipAddAccount,
+  },
   { path: "/settings", exact: true, name: "Settings", component: Settings },
+  { path: "/nlp", exact: true, name: "Nlp", component: Nlp },
 ];
 
 export default routes;

@@ -13,6 +13,8 @@ import {
 } from "react-bootstrap";
 import { Formik } from "formik";
 
+import MyVerticallyCenteredModalGet from "../../components/MyVerticallyCenteredModal";
+
 const validate = (values) => {
   // console.log("validate");
   const errors = {};
@@ -208,6 +210,7 @@ function Add(props) {
 
   const [accounts, setAccounts] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
+  const [deletConfirm, setDeletConfirm] = useState(false);
 
   useEffect(() => {
     const path = `server/getDatabase?id=${id}`;
@@ -252,6 +255,22 @@ function Add(props) {
         id={id}
         setAccounts={setAccounts}
       />
+      <MyVerticallyCenteredModalGet
+        title="Are you sure want to Delete ?"
+        show={deletConfirm}
+        onHide={() => setDeletConfirm(false)}
+        body={
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button>Yes</Button>
+            <Button>No</Button>
+          </div>
+        }
+      />
       <Card>
         <Card.Header>
           <Card.Title as="h5">Databases</Card.Title>
@@ -268,6 +287,7 @@ function Add(props) {
                 <th>IP</th>
                 <th>Port</th>
                 <th>Type</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -279,6 +299,20 @@ function Add(props) {
                     <td>{data.ip}</td>
                     <td>{data.port}</td>
                     <td>{data.type}</td>
+                    <td style={{}}>
+                      <i
+                        className="feather icon-edit
+                       auth-icon "
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setModalShow(true)}
+                      />
+                      <i
+                        className="feather icon-trash
+                       auth-icon ml-3"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setDeletConfirm(true)}
+                      />
+                    </td>
                   </tr>
                 ))}
             </tbody>

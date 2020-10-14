@@ -21,6 +21,9 @@ const ServerAdd = React.lazy(() => import("../layout/Server/add"));
 //Dip
 const Dip = React.lazy(() => import("../layout/Dip"));
 const DipAdd = React.lazy(() => import("../layout/Dip/add"));
+//Settings
+
+const Settings = React.lazy(() => import("../layout/Settings"));
 
 const routes = [
   {
@@ -36,6 +39,7 @@ const routes = [
   { path: "/server/:id", exact: true, name: "Server", component: ServerAdd },
   { path: "/dip", exact: true, name: "Carrier", component: Dip },
   { path: "/dip/:id", exact: true, name: "Carrier", component: DipAdd },
+  { path: "/settings", exact: true, name: "Settings", component: Settings },
 ];
 
 export default routes;

@@ -19,38 +19,22 @@ import Aux from "../../../hoc/_Aux";
 import { requestQuery } from "../../helpers/apirequest";
 import { Link } from "react-router-dom";
 
-import MyFormGroup from "../../components/MyFormGroup";
-
 const validate = (values) => {
   // console.log("validate");
   const errors = {};
   if (!values.name) {
     // console.log("name error");
     errors.name = "Required";
-  } else if (values.name.length > 10) {
+  } else if (values.name.length > 15) {
     console.log("length more");
     errors.name = "Must be 15 characters or less";
   }
 
   if (!values.url) {
     errors.url = "Required";
-  } else if (!/^[A-Z0-9._%+-]+\.[A-Z]{2,4}[\s\S]*$/i.test(values.url)) {
-    errors.url = "Invalid  URL";
+  } else if (values.url.length > 20) {
+    errors.url = "Must be 20 characters or less";
   }
-  //  else if (values.url.length > 20) {
-  //   errors.url = "Must be 20 characters or less";
-  // }
-  if (!values.token) {
-    errors.token = "Required";
-  } else if (values.token.length > 20) {
-    errors.token = "Must be 20 characters or less";
-  }
-  if (!values.key) {
-    errors.key = "Required";
-  } else if (values.key.length > 20) {
-    errors.key = "Must be 20 characters or less";
-  }
-  // console.log("error", errors);
 
   return errors;
 };
@@ -65,7 +49,7 @@ function MyVerticallyCenteredModal(props) {
   const onSubmit = (values) => {
     // console.log("values ", values);
 
-    const path = "cpass/add";
+    const path = "dip/add";
     const url = `http://localhost:5000/${path}`;
 
     const requestOptions = {
@@ -105,14 +89,16 @@ function MyVerticallyCenteredModal(props) {
       centered
     >
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">Add cpass</Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Add Carrier
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Formik
           // validationSchema={schema}
           onSubmit={onSubmit}
           initialValues={{}}
-          validate={validate}
+          // validate={validate}
         >
           {({
             handleSubmit,
@@ -132,41 +118,45 @@ function MyVerticallyCenteredModal(props) {
                     placeholder="Enter Name"
                     onChange={handleChange}
                     isValid={touched.name && !errors.name}
-                    isInvalid={errors.name}
+                    isInvalid={!!errors.name}
                   />
+                  {/* <Form.Text className="text-muted">
+                          We'll never share your email with anyone else.
+                        </Form.Text> */}
                 </Form.Group>
-                <MyFormGroup
-                  errors={errors}
-                  handleChange={handleChange}
-                  name="url"
-                />
-                {/* <Form.Group as={Col} md="6" controlId="url">
-                  <Form.Label>URL</Form.Label>
+                <Form.Group as={Col} md="6" controlId="carrier">
+                  <Form.Label>Carrier</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="Url"
+                    placeholder="Carrier"
                     onChange={handleChange}
-                    isInvalid={errors.url}
                   />
-                </Form.Group> */}
-                <Form.Group as={Col} md="6" controlId="token">
-                  <Form.Label>Token</Form.Label>
+                </Form.Group>
+
+                <Form.Group as={Col} md="6" controlId="ip">
+                  <Form.Label>IP</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="IP"
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} md="6" controlId="port">
+                  <Form.Label>Port</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Enter Token"
                     onChange={handleChange}
-                    isInvalid={errors.token}
                   />
                 </Form.Group>
-                <Form.Group as={Col} md="6" controlId="key">
+                {/* <Form.Group as={Col} md="6" controlId="key">
                   <Form.Label>Key</Form.Label>
                   <Form.Control
                     type="text"
                     placeholder="Key"
                     onChange={handleChange}
-                    isInvalid={errors.key}
                   />
-                </Form.Group>
+                </Form.Group> */}
               </Form.Row>
               {/* <Form.Group controlId="checkBox">
                 <Form.Check
@@ -191,7 +181,7 @@ const Cpass = () => {
   const [modalShow, setModalShow] = React.useState(false);
 
   useEffect(() => {
-    const path = "cpass";
+    const path = "dip";
     const url = `http://localhost:5000/${path}`;
 
     const requestOptions = {
@@ -254,12 +244,11 @@ const Cpass = () => {
               cpass.map((data) => (
                 <Col key={data.id} md={6} xl={4} className="mb-4">
                   <>
-                    <Link to={{ pathname: `/cpass/${data.id}`, data: data }}>
+                    <Link to={{ pathname: `/dip/${data.id}`, data: data }}>
                       <Card.Body
                         className="shadow-1"
                         style={{ marginTop: "20px", background: "white" }}
                       >
-                        <h6 className="mb-4">{data.url}</h6>
                         <div className="row d-flex align-items-center mb-2">
                           <div className="col-9">
                             <h3 className="f-w-300 d-flex align-items-center m-b-0">
@@ -272,6 +261,12 @@ const Cpass = () => {
                             <p className="m-b-0">{data.key}</p>
                           </div> */}
                         </div>
+                        <Row>
+                          <h6 className="ml-4">{data.ip}</h6>
+                          <h6 className="ml-1">:</h6>
+                          <h6 className="ml-1">{data.port}</h6>
+                          <h6 className="ml-5">{data.carrier}</h6>
+                        </Row>
 
                         <div
                           className="progress m-t-20"

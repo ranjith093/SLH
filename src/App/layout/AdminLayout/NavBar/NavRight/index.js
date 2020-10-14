@@ -10,6 +10,7 @@ import { AuthContext } from "../../../../state/context";
 import Avatar1 from "../../../../../assets/images/user/avatar-1.jpg";
 import Avatar2 from "../../../../../assets/images/user/avatar-2.jpg";
 import Avatar3 from "../../../../../assets/images/user/avatar-3.jpg";
+import { NavLink } from "react-router-dom";
 
 const NavRight = (props) => {
   const [listOpen, setListOpen] = useState(false);
@@ -120,11 +121,21 @@ const NavRight = (props) => {
             <i className="icon feather icon-mail" />
           </a>
         </li> */}
+
+        <NavLink to="/settings">
+          <i
+            className="icon feather icon-settings"
+            style={{ cursor: "pointer" }}
+          />
+        </NavLink>
         <li>
           <Dropdown alignRight={!props.rtlLayout} className="drp-user">
             <Dropdown.Toggle variant={"link"} id="dropdown-basic">
-              <i className="icon feather icon-settings" />
+              <i className="icon feather icon-" />
             </Dropdown.Toggle>
+            {/* <Dropdown.Toggle variant={"link"} id="dropdown-basic">
+              <i className="icon feather icon-" />
+            </Dropdown.Toggle> */}
             <Dropdown.Menu alignRight className="profile-notification">
               <div className="pro-head">
                 <img src={Avatar1} className="img-radius" alt="User Profile" />

@@ -16,21 +16,6 @@ export default {
       ],
     },
     {
-      id: "settings",
-      title: "Settings",
-      type: "group",
-      icon: "icon-settings",
-      children: [
-        {
-          id: "settings",
-          title: "Settings",
-          type: "item",
-          url: "/settings",
-          icon: "feather icon-settings",
-        },
-      ],
-    },
-    {
       id: "cpass",
       title: "Cpass",
       type: "group",

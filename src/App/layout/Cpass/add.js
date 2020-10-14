@@ -3,6 +3,8 @@ import Aux from "../../../hoc/_Aux";
 import { Row, Col, Card, Table, Form, Button, Modal } from "react-bootstrap";
 import { Formik } from "formik";
 
+import MyVerticallyCenteredModalGet from "../../components/MyVerticallyCenteredModal";
+
 const validate = (values) => {
   const errors = {};
   if (!values.name) {
@@ -178,6 +180,8 @@ function Add(props) {
   const [accounts, setAccounts] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
 
+  const [deletConfirm, setDeletConfirm] = useState(false);
+
   useEffect(() => {
     const path = `cpass/getAccounts?id=${id}`;
     const url = `http://localhost:5000/${path}`;
@@ -221,6 +225,23 @@ function Add(props) {
         id={id}
         setAccounts={setAccounts}
       />
+      <MyVerticallyCenteredModalGet
+        title="Are you sure want to Delete ?"
+        show={deletConfirm}
+        onHide={() => setDeletConfirm(false)}
+        body={
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button>Yes</Button>
+            <Button>No</Button>
+          </div>
+        }
+      />
+
       <Card>
         <Card.Header>
           <Card.Title as="h5">Accounts</Card.Title>
@@ -248,6 +269,28 @@ function Add(props) {
                     <td>{data.gateway}</td>
                     <td>{data.callerId}</td>
                     <td>{data.domain}</td>
+                    <td
+                      style={
+                        {
+                          // background: "red",
+                          // display: "flex",
+                          // justifyContent: "flex-end",
+                        }
+                      }
+                    >
+                      <i
+                        className="feather icon-edit
+                       auth-icon "
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setModalShow(true)}
+                      />
+                      <i
+                        className="feather icon-trash
+                       auth-icon ml-3"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => setDeletConfirm(true)}
+                      />
+                    </td>
                   </tr>
                 ))}
             </tbody>

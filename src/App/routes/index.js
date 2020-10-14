@@ -27,7 +27,7 @@ const DipAddAccount = React.lazy(() => import("../layout/Dip/addAccount"));
 const Settings = React.lazy(() => import("../layout/Settings"));
 
 //NLp
-const Nlp = React.lazy(() => import("../layout/Nlp/add"));
+const Nlp = React.lazy(() => import("../layout/Nlp"));
 
 const routes = [
   {

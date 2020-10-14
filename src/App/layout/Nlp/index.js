@@ -55,10 +55,11 @@ const validate = (values) => {
 
 function MyVerticallyCenteredModal(props) {
   console.log("props", { ...props });
-  const { setCpass, ...props1 } = props;
+  const { setCpass, nlp, ...props1 } = props;
   const passto = (entry, values) => {
     console.log("values from modal pass to", values);
   };
+  console.log("nlp", nlp);
 
   const onSubmit = (values) => {
     // console.log("values ", values);
@@ -109,7 +110,9 @@ function MyVerticallyCenteredModal(props) {
         <Formik
           // validationSchema={schema}
           onSubmit={onSubmit}
-          initialValues={{}}
+          initialValues={{
+            name: nlp.name,
+          }}
           validate={validate}
         >
           {({
@@ -128,6 +131,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Control
                     type="text"
                     placeholder="Enter Name"
+                    value={nlp.name ? nlp.name : ""}
                     onChange={handleChange}
                     isValid={touched.name && !errors.name}
                     isInvalid={!!errors.name}
@@ -186,6 +190,9 @@ const Cpass = () => {
   const [cpass, setCpass] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
   const [deletConfirm, setDeletConfirm] = useState(false);
+
+  const [nlp, setnlp] = useState({});
+
   useEffect(() => {
     const path = "server";
     const url = `http://localhost:5000/${path}`;
@@ -222,7 +229,8 @@ const Cpass = () => {
       <MyVerticallyCenteredModal
         show={modalShow}
         onHide={() => setModalShow(false)}
-        setCpass={setCpass}
+        setAccounts={setCpass}
+        nlp={nlp}
       />
       <MyVerticallyCenteredModalGet
         title="Are you sure want to Delete ?"
@@ -272,7 +280,10 @@ const Cpass = () => {
                         className="feather icon-edit
                        auth-icon "
                         style={{ cursor: "pointer" }}
-                        onClick={() => setModalShow(true)}
+                        onClick={() => {
+                          setnlp(data);
+                          setModalShow(true);
+                        }}
                       />
                       <i
                         className="feather icon-trash

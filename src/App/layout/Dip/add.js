@@ -8,7 +8,7 @@ import {
   Form,
   Button,
   Modal,
-  Accordion,
+  Accordion
 } from "react-bootstrap";
 import { Formik } from "formik";
 
@@ -191,7 +191,6 @@ function MyVerticallyCenteredModal(props) {
       <Modal.Body>
         <Accordion defaultActiveKey="0">
           <div>hi</div>
-          {/* <Card>
             <Accordion.Toggle as={Button} variant="link" eventKey="0">
               Single Entry
             </Accordion.Toggle>

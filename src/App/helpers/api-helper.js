@@ -26,12 +26,10 @@ export const getApiCall = (path) => {
 export const postApiCall = (path, values) => {
   const url = `${config.defaultUrl}/${path}`;
 
-  const body = { id: uuid(), ...values };
+  // const { _id, ...values1 } = values;
 
-  const { _id, ...values1 } = values;
-
-  console.log("post body ", body);
-  console.log("post body values", { id: _id, ...values1 });
+  // console.log("post body values", { id: _id, ...values1 });
+  console.log("post body values", values);
 
   const requestOptions = {
     method: "POST",

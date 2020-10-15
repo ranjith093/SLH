@@ -43,7 +43,13 @@ function MyVerticallyCenteredModal(props) {
   const onSubmit = async (values) => {
     console.log("values ", { id, ...values });
 
-    const body = { cpaasAccountId: id, id: uuid(), ...values };
+    const { _id, ...values1 } = values;
+
+    const body = {
+      cpaasAccountId: id,
+      id: Object.keys(account).length !== 0 ? _id : uuid(),
+      ...values1,
+    };
 
     // const path = "cpaasAcocunts/addCpaasAccount";
     const path =
@@ -51,7 +57,7 @@ function MyVerticallyCenteredModal(props) {
         ? "cpaasAcocunts/updateCpaasAccount"
         : "cpaasAcocunts/addCpaasAccount";
     const json = await postApiCall(path, body);
-    console.log("json add account ", json);
+    console.log("json add account  ", json);
     // const entry = {
     //   id: json.id,
     // };
@@ -61,7 +67,10 @@ function MyVerticallyCenteredModal(props) {
         return preState;
       }
       if (preState) {
-        return [...preState, body];
+        return preState.map((item) =>
+          item._id === _id ? { ...item, ...values1 } : item
+        );
+        // return [...preState, body];
       }
       return [json];
     });

@@ -10,7 +10,8 @@ function Index() {
       <div className="m-4" key={data.id}>
         <>
           <Link to={{ pathname: `/${data.id}`, data: data }}>
-            <div className="w-40 h-40 bg-white shadow-md rounded-md flex justify-center items-center">
+            <div className="w-40 h-40 bg-white shadow-md rounded-md flex flex-col justify-center items-center">
+              {/* <i className="feather icon-lock " /> */}
               {data.title}
             </div>
           </Link>

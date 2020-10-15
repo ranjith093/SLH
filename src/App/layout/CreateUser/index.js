@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Row,
   Col,
@@ -18,9 +18,14 @@ import { Formik } from "formik";
 import MyVerticallyCenteredModalGet from "../../components/MyVerticallyCenteredModal";
 
 import Aux from "../../../hoc/_Aux";
+import { useTransition, animated } from "react-spring";
 
 import { requestQuery } from "../../helpers/apirequest";
 import { Link } from "react-router-dom";
+import Basicinfo from "./Basicinfo";
+import Options from "./Options";
+import CpassForm from "./Cpass";
+import Dialer from "./Dialer";
 
 const validate = (values) => {
   // console.log("validate");
@@ -185,6 +190,12 @@ function MyVerticallyCenteredModal(props) {
     </Modal>
   );
 }
+const pages = [
+  ({ style, onClick }) => <Basicinfo style={style} onClick={onClick} />,
+  ({ style, onClick }) => <Options style={style} onClick={onClick} />,
+  ({ style, onClick }) => <CpassForm style={style} onClick={onClick} />,
+  ({ style, onClick }) => <Dialer style={style} onClick={onClick} />,
+];
 
 const Cpass = () => {
   const [cpass, setCpass] = useState([]);
@@ -192,6 +203,14 @@ const Cpass = () => {
   const [deletConfirm, setDeletConfirm] = useState(false);
 
   const [nlp, setnlp] = useState({});
+  const [index, set] = useState(0);
+  const onClick = useCallback(() => set((state) => (state + 1) % 4), []);
+  // const onClickIndex = useCallback(() => set((state) => (state + 1) % 4), []);
+  const transitions = useTransition(index, (p) => p, {
+    from: { opacity: 0, transform: "translate3d(100%,0,0)" },
+    enter: { opacity: 1, transform: "translate3d(0%,0,0)" },
+    leave: { opacity: 0, transform: "translate3d(-50%,0,0)" },
+  });
 
   useEffect(() => {
     const path = "server";
@@ -216,169 +235,225 @@ const Cpass = () => {
 
   return (
     <Aux>
-      <Row>
-        <Col>
-          <Card>
-            <Card.Header>
-              <Card.Title as="h5">Basic User</Card.Title>
-            </Card.Header>
-            <Card.Body>
-              <Form>
-                <Row>
-                  <Form.Group as={Col} md="6" controlId="name">
-                    <Form.Label>Name</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Name" />
-                    {/* <Form.Text className="text-muted">
-                    We'll never share your email with anyone else.
-                  </Form.Text> */}
-                  </Form.Group>
-
-                  <Form.Group as={Col} md="6" controlId="phone">
-                    <Form.Label>Phone</Form.Label>
-                    <Form.Control type="text" placeholder="Phone" />
-                  </Form.Group>
-                  <Form.Group as={Col} md="6" controlId="company">
-                    <Form.Label>Company</Form.Label>
-                    <Form.Control type="text" placeholder="Company" />
-                  </Form.Group>
-                  {/* <Form.Group controlId="formBasicChecbox">
-                    <Form.Check type="checkbox" label="Check me out" />
-                  </Form.Group> */}
-                </Row>
-                <Button variant="primary">Submit</Button>
-              </Form>
-            </Card.Body>
-          </Card>
-          <Card>
-            <Card.Header>
-              <Card.Title as="h5">Options</Card.Title>
-            </Card.Header>
-
-            <Card.Body>
-              <Form>
-                <Row>
-                  <Col md={12}>
-                    {/* <h5>Options</h5>
-                    <hr /> */}
-                    <Form.Group>
-                      <Form.Check
-                        custom
-                        type="checkbox"
-                        id="dialer"
-                        label="Dialer"
-                      />
-                    </Form.Group>
-                    <Form.Group>
-                      <Form.Check custom type="checkbox" id="vb" label="VB" />
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <Button variant="primary">Submit</Button>
-              </Form>
-            </Card.Body>
-          </Card>
-
-          <Card>
-            <Card.Header>
-              <Card.Title as="h5">Cpass</Card.Title>
-            </Card.Header>
-
-            <Card.Body>
-              <Form>
-                <Row>
-                  <Col md={12}>
-                    {/* <h5>Options</h5>
-                    <hr /> */}
-                    <Form.Group>
-                      <Form.Check
-                        inline
-                        custom
-                        type="radio"
-                        label="cpass 1"
-                        name="supportedRadio"
-                        id="supportedRadio21"
-                      />
-                      <Form.Check
-                        inline
-                        custom
-                        type="radio"
-                        label="cpass 2"
-                        name="supportedRadio"
-                        id="supportedRadio22"
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <Button variant="primary">Submit</Button>
-              </Form>
-            </Card.Body>
-          </Card>
-
-          <Card>
-            <Card.Header>
-              <Card.Title as="h5">Dialer</Card.Title>
-            </Card.Header>
-
-            <Card.Body>
-              <Form>
-                <Row>
-                  <Col md={12}>
-                    {/* <h5>Licence</h5>
-                    <hr /> */}
-                    <Form.Group controlId="licence">
-                      <Form.Label>Licence</Form.Label>
-                      <Form.Control type="text" placeholder="licence" />
-                    </Form.Group>
-                  </Col>
-                  <Col md={12}>
-                    <h5>Database</h5>
-                    <hr />
-                    <Form.Group>
-                      <Form.Check
-                        inline
-                        custom
-                        type="radio"
-                        label="mongo"
-                        name="supportedRadio"
-                        id="supportedRadio23"
-                      />
-                      <Form.Check
-                        inline
-                        custom
-                        type="radio"
-                        label="sql"
-                        name="supportedRadio"
-                        id="supportedRadio24"
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col md={12}>
-                    <h5>Features</h5>
-                    <hr />
-                    <Form.Group>
-                      <Form.Check
-                        custom
-                        type="checkbox"
-                        id="dialer"
-                        label="Dialer"
-                      />
-                      <Form.Check
-                        custom
-                        type="checkbox"
-                        id="dialer"
-                        label="Dialer"
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-                <Button variant="primary">Submit</Button>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+      index:{index}
+      <nav class=" px-2 pt-2 ">
+        <div class="-mb-px flex justify-center">
+          <a
+            class={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
+              index == 0 ? "border-teal-dark" : "border-transparent"
+            }`}
+            href="#"
+            onClick={useCallback(() => set(0), [])}
+          >
+            Home
+          </a>
+          <a
+            class={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
+              index == 1 ? "border-teal-dark" : "border-transparent"
+            }`}
+            href="#"
+            onClick={useCallback(() => set(1), [])}
+          >
+            Options
+          </a>
+          <a
+            class={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300  ${
+              index == 2 ? "border-teal-dark" : "border-transparent"
+            }`}
+            href="#"
+            onClick={useCallback(() => set(2), [])}
+          >
+            Cpass
+          </a>
+          <a
+            class={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
+              index == 3 ? "border-teal-dark" : "border-transparent"
+            }`}
+            href="#"
+            onClick={useCallback(() => set(3), [])}
+          >
+            Dialer
+          </a>
+        </div>
+      </nav>
+      <div
+        className="absolute left-0 right-0  h-full cursor-pointer flex items-center "
+        // onClick={onClick}
+      >
+        {transitions.map(({ item, props, key }) => {
+          const Page = pages[item];
+          return <Page key={key} style={props} onClick={onClick} />;
+        })}
+      </div>
+      {/* <Button variant="primary">Submit</Button> */}
     </Aux>
   );
 };
 
 export default Cpass;
+
+const DataForm = () => (
+  <Row>
+    <Col>
+      <Card>
+        <Card.Header>
+          <Card.Title as="h5">Basic User</Card.Title>
+        </Card.Header>
+        <Card.Body>
+          <Form>
+            <Row>
+              <Form.Group as={Col} md="6" controlId="name">
+                <Form.Label>Name</Form.Label>
+                <Form.Control type="text" placeholder="Enter Name" />
+                {/* <Form.Text className="text-muted">
+                    We'll never share your email with anyone else.
+                  </Form.Text> */}
+              </Form.Group>
+
+              <Form.Group as={Col} md="6" controlId="phone">
+                <Form.Label>Phone</Form.Label>
+                <Form.Control type="text" placeholder="Phone" />
+              </Form.Group>
+              <Form.Group as={Col} md="6" controlId="company">
+                <Form.Label>Company</Form.Label>
+                <Form.Control type="text" placeholder="Company" />
+              </Form.Group>
+              {/* <Form.Group controlId="formBasicChecbox">
+                    <Form.Check type="checkbox" label="Check me out" />
+                  </Form.Group> */}
+            </Row>
+            <Button variant="primary">Submit</Button>
+          </Form>
+        </Card.Body>
+      </Card>
+      <Card>
+        <Card.Header>
+          <Card.Title as="h5">Options</Card.Title>
+        </Card.Header>
+
+        <Card.Body>
+          <Form>
+            <Row>
+              <Col md={12}>
+                {/* <h5>Options</h5>
+                    <hr /> */}
+                <Form.Group>
+                  <Form.Check
+                    custom
+                    type="checkbox"
+                    id="dialer"
+                    label="Dialer"
+                  />
+                </Form.Group>
+                <Form.Group>
+                  <Form.Check custom type="checkbox" id="vb" label="VB" />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Button variant="primary">Submit</Button>
+          </Form>
+        </Card.Body>
+      </Card>
+
+      <Card>
+        <Card.Header>
+          <Card.Title as="h5">Cpass</Card.Title>
+        </Card.Header>
+
+        <Card.Body>
+          <Form>
+            <Row>
+              <Col md={12}>
+                {/* <h5>Options</h5>
+                    <hr /> */}
+                <Form.Group>
+                  <Form.Check
+                    inline
+                    custom
+                    type="radio"
+                    label="cpass 1"
+                    name="supportedRadio"
+                    id="supportedRadio21"
+                  />
+                  <Form.Check
+                    inline
+                    custom
+                    type="radio"
+                    label="cpass 2"
+                    name="supportedRadio"
+                    id="supportedRadio22"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Button variant="primary">Submit</Button>
+          </Form>
+        </Card.Body>
+      </Card>
+
+      <Card>
+        <Card.Header>
+          <Card.Title as="h5">Dialer</Card.Title>
+        </Card.Header>
+
+        <Card.Body>
+          <Form>
+            <Row>
+              <Col md={12}>
+                {/* <h5>Licence</h5>
+                    <hr /> */}
+                <Form.Group controlId="licence">
+                  <Form.Label>Licence</Form.Label>
+                  <Form.Control type="text" placeholder="licence" />
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <h5>Database</h5>
+                <hr />
+                <Form.Group>
+                  <Form.Check
+                    inline
+                    custom
+                    type="radio"
+                    label="mongo"
+                    name="supportedRadio"
+                    id="supportedRadio23"
+                    className="bg-gray-100 w-32 h-20 flex justify-center items-center shadow-md rounded-lg"
+                  />
+                  <Form.Check
+                    inline
+                    custom
+                    type="radio"
+                    label="sql"
+                    name="supportedRadio"
+                    id="supportedRadio24"
+                    className="bg-gray-100 w-32 h-20 flex justify-center items-center shadow-md rounded-lg po"
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={12}>
+                <h5>Features</h5>
+                <hr />
+                <Form.Group>
+                  <Form.Check
+                    custom
+                    type="checkbox"
+                    id="dialer"
+                    label="Dialer"
+                  />
+                  <Form.Check
+                    custom
+                    type="checkbox"
+                    id="dialer"
+                    label="Dialer"
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+            <Button variant="primary">Submit</Button>
+          </Form>
+        </Card.Body>
+      </Card>
+    </Col>
+  </Row>
+);

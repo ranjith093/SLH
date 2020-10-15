@@ -1,4 +1,7 @@
 export default {
+  //http://localhost:5000
+  //http://192.168.0.195:5000
+  defaultUrl: "http://192.168.0.195:5000",
   // defaultPath: "/dashboard/default",
   defaultPath: "/settings",
   basename: "/slashrtc", // only at build time to set, like /datta-able

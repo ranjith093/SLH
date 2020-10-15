@@ -19,7 +19,7 @@ import ScrollToTop from "./layout/ScrollToTop";
 import routes from "../route";
 
 import AuthScreen from "./layout/Auth";
-
+import config from "../config";
 import "../assets/tw/styles.css";
 
 const AdminLayout = Loadable({
@@ -105,7 +105,7 @@ function App() {
             password: data.password,
           }),
         };
-        fetch("http://localhost:5000/login", requestOptions)
+        fetch(`${config.defaultUrl}/login`, requestOptions)
           .then((response) => response.json())
           .then((json) => {
             console.log("data api", json);

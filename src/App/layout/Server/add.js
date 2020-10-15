@@ -14,7 +14,8 @@ import {
 import { Formik } from "formik";
 
 import MyVerticallyCenteredModalGet from "../../components/MyVerticallyCenteredModal";
-
+import { getApiCall, postApiCall } from "../../helpers/api-helper";
+import { v4 as uuid } from "uuid";
 const validate = (values) => {
   // console.log("validate");
   const errors = {};
@@ -63,51 +64,75 @@ const validate = (values) => {
 
 function MyVerticallyCenteredModal(props) {
   console.log("props", { ...props });
-  const { setAccounts, id, ...props1 } = props;
+  const { setAccounts, id, account, ...props1 } = props;
   const passto = (entry, values) => {
     console.log("values from modal pass to", values);
   };
 
-  const onSubmit = (values) => {
+  const onSubmit = async (values) => {
     console.log("values ", { id, ...values });
 
-    const path = "server/addDatabase";
-    const url = `http://localhost:5000/${path}`;
+    // const path = "serverDatabase/addServerDatabase";
+    const body = { serverId: id, id: uuid(), ...values };
 
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, ...values }),
-    };
-    return fetch(url, requestOptions)
-      .then((response) => response.json())
-      .then((json) => {
-        console.log("data api", json);
-        // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-        if (json.status === "fail") {
-          console.log(json.error);
-          return;
-        }
-        const entry = {
-          id: json.id,
-        };
+    // const path = "cpaasAcocunts/addCpaasAccount";
+    const path =
+      Object.keys(account).length !== 0
+        ? "serverDatabase/updateServerDatabase"
+        : "serverDatabase/addServerDatabase";
+    const json = await postApiCall(path, body);
+    console.log("json add account ", json);
+    // const entry = {
+    //   id: json.id,
+    // };
+    setAccounts((preState) => {
+      console.log("pre state set account", preState);
+      if (!json) {
+        return preState;
+      }
+      if (preState) {
+        return [...preState, body];
+      }
+      return [json];
+    });
+    props.onHide();
 
-        // setCpass(entry);
+    // const url = `http://localhost:5000/${path}`;
 
-        // setAccounts((preState) => [...preState, Object.assign(entry, values)]);
-        setAccounts((preState) => {
-          if (preState) {
-            return [...preState, values];
-          }
-          return [values];
-        });
-        props.onHide();
+    // const requestOptions = {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ id, ...values }),
+    // };
+    // return fetch(url, requestOptions)
+    //   .then((response) => response.json())
+    //   .then((json) => {
+    //     console.log("data api", json);
+    //     // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
+    //     if (json.status === "fail") {
+    //       console.log(json.error);
+    //       return;
+    //     }
+    //     const entry = {
+    //       id: json.id,
+    //     };
 
-        // props.setCpass((preState) => [
-        //   ...preState,
-        //   Object.assign(entry, values),
-        // ]);
-      });
+    //     // setCpass(entry);
+
+    //     // setAccounts((preState) => [...preState, Object.assign(entry, values)]);
+    //     setAccounts((preState) => {
+    //       if (preState) {
+    //         return [...preState, values];
+    //       }
+    //       return [values];
+    //     });
+    //     props.onHide();
+
+    //     // props.setCpass((preState) => [
+    //     //   ...preState,
+    //     //   Object.assign(entry, values),
+    //     // ]);
+    //   });
   };
   return (
     <Modal
@@ -171,6 +196,24 @@ function MyVerticallyCenteredModal(props) {
                     isInvalid={!!errors.port}
                   />
                 </Form.Group>
+                <Form.Group as={Col} md="6" controlId="publicIp">
+                  <Form.Label>publicIp</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="22"
+                    onChange={handleChange}
+                    // isInvalid={!!errors.publicIp}
+                  />
+                </Form.Group>
+                <Form.Group as={Col} md="6" controlId="publicPort">
+                  <Form.Label>publicPort</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="22"
+                    onChange={handleChange}
+                    // isInvalid={!!errors.publicPort}
+                  />
+                </Form.Group>
                 <Form.Group as={Col} md="6" controlId="type">
                   <Form.Label>Type</Form.Label>
                   {/* <Form.Control
@@ -212,34 +255,43 @@ function MyVerticallyCenteredModal(props) {
 }
 
 function Add(props) {
-  const id = props.location.data.id;
+  const id = props.location.data._id;
   const name = props.location.data.name;
   const url = props.location.data.url;
+
   console.log(props.location.data);
 
   const [accounts, setAccounts] = useState([]);
+  const [account, setAccount] = useState({});
   const [modalShow, setModalShow] = React.useState(false);
   const [deletConfirm, setDeletConfirm] = useState(false);
 
+  const getData = async () => {
+    const path = "serverDatabase/viewServerDatabase";
+    const json = await getApiCall(path);
+    console.log("json helper", json);
+    setAccounts(json.data);
+  };
   useEffect(() => {
-    const path = `server/getDatabase?id=${id}`;
-    const url = `http://localhost:5000/${path}`;
+    getData();
+    // const path = `server/getDatabase?id=${id}`;
+    // const url = `http://localhost:5000/${path}`;
 
-    const requestOptions = {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    };
-    fetch(url, requestOptions)
-      .then((response) => response.json())
-      .then((json) => {
-        console.log("data api server", json);
-        // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-        if (json.status === "fail") {
-          console.log(json.error);
-          return;
-        }
-        setAccounts(json.data);
-      });
+    // const requestOptions = {
+    //   method: "GET",
+    //   headers: { "Content-Type": "application/json" },
+    // };
+    // fetch(url, requestOptions)
+    //   .then((response) => response.json())
+    //   .then((json) => {
+    //     console.log("data api server", json);
+    //     // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
+    //     if (json.status === "fail") {
+    //       console.log(json.error);
+    //       return;
+    //     }
+    //     setAccounts(json.data);
+    //   });
   }, []);
 
   return (
@@ -263,6 +315,7 @@ function Add(props) {
         onHide={() => setModalShow(false)}
         id={id}
         setAccounts={setAccounts}
+        account={account}
       />
       <MyVerticallyCenteredModalGet
         title="Are you sure want to Delete ?"

@@ -235,12 +235,14 @@ const Cpass = () => {
 
   return (
     <Aux>
-      index:{index}
-      <nav class=" px-2 pt-2 ">
-        <div class="-mb-px flex justify-center">
+      {/* index:{index} */}
+      <nav className=" px-2">
+        <div className="-mb-px flex justify-center">
           <a
-            class={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
-              index == 0 ? "border-teal-dark" : "border-transparent"
+            className={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
+              index == 0
+                ? "border-teal-dark"
+                : "border-transparent text-gray-900"
             }`}
             href="#"
             onClick={useCallback(() => set(0), [])}
@@ -248,8 +250,10 @@ const Cpass = () => {
             Home
           </a>
           <a
-            class={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
-              index == 1 ? "border-teal-dark" : "border-transparent"
+            className={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
+              index == 1
+                ? "border-teal-dark"
+                : "border-transparent text-gray-900"
             }`}
             href="#"
             onClick={useCallback(() => set(1), [])}
@@ -257,8 +261,10 @@ const Cpass = () => {
             Options
           </a>
           <a
-            class={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300  ${
-              index == 2 ? "border-teal-dark" : "border-transparent"
+            className={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300  ${
+              index == 2
+                ? "border-teal-dark"
+                : "border-transparent text-gray-900"
             }`}
             href="#"
             onClick={useCallback(() => set(2), [])}
@@ -266,8 +272,10 @@ const Cpass = () => {
             Cpass
           </a>
           <a
-            class={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
-              index == 3 ? "border-teal-dark" : "border-transparent"
+            className={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
+              index == 3
+                ? "border-teal-dark"
+                : "border-transparent text-gray-900"
             }`}
             href="#"
             onClick={useCallback(() => set(3), [])}
@@ -277,7 +285,7 @@ const Cpass = () => {
         </div>
       </nav>
       <div
-        className="absolute left-0 right-0  h-full cursor-pointer flex items-center "
+        className="absolute left-0 right-0  h-full cursor-pointer flex items-center  "
         // onClick={onClick}
       >
         {transitions.map(({ item, props, key }) => {

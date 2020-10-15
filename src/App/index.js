@@ -43,6 +43,7 @@ function App() {
           return {
             ...prevState,
             isSignout: false,
+            isLoading: false,
             userToken: action.token,
             userId: action.id,
           };
@@ -97,25 +98,28 @@ function App() {
     () => ({
       signIn: async (data) => {
         console.log("signIn data", data);
+        // console.log("state app signin", state);
+        state.isLoading = true;
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            username: data.email,
+            userName: data.email,
             password: data.password,
           }),
         };
-        fetch(`${config.defaultUrl}/login`, requestOptions)
+        fetch(`${config.defaultUrl}/newCloud/login`, requestOptions)
           .then((response) => response.json())
           .then((json) => {
             console.log("data api", json);
-            if (json.status === "fail") {
+            if (json.status !== "success") {
               // {status: "fail", error: "user not exist"}
               dispatch({ type: "SET_ERROR", error: json.error });
               return;
             }
 
             localStorage.setItem("userToken", json.token);
+            localStorage.setItem("userRefreshToken", json.refreshToken);
             localStorage.setItem("userId", json._id);
             dispatch({ type: "SIGN_IN", token: json.token, id: json._id });
             // setToken(true);

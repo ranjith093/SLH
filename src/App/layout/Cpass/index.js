@@ -20,6 +20,8 @@ import { requestQuery } from "../../helpers/apirequest";
 import { Link } from "react-router-dom";
 
 import MyFormGroup from "../../components/MyFormGroup";
+import { getApiCall, postApiCall } from "../../helpers/api-helper";
+import { v4 as uuid } from "uuid";
 
 const validate = (values) => {
   // console.log("validate");
@@ -28,7 +30,7 @@ const validate = (values) => {
     // console.log("name error");
     errors.name = "Required";
   } else if (values.name.length > 10) {
-    console.log("length more");
+    // console.log("length more");
     errors.name = "Must be 15 characters or less";
   }
 
@@ -56,46 +58,23 @@ const validate = (values) => {
 };
 
 function MyVerticallyCenteredModal(props) {
-  console.log("props", { ...props });
+  // console.log("props", { ...props });
   const { setCpass, ...props1 } = props;
-  const passto = (entry, values) => {
-    console.log("values from modal pass to", values);
-  };
+  // const passto = (entry, values) => {
+  //   console.log("values from modal pass to", values);
+  // };
 
-  const onSubmit = (values) => {
+  const onSubmit = async (values) => {
     // console.log("values ", values);
 
-    const path = "cpass/add";
-    const url = `http://localhost:5000/${path}`;
-
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
+    const path = "cpaas/addCpaas";
+    const body = { id: uuid(), ...values };
+    const json = await postApiCall(path, body);
+    const entry = {
+      id: json.id,
     };
-    return fetch(url, requestOptions)
-      .then((response) => response.json())
-      .then((json) => {
-        console.log("data api", json);
-        // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-        if (json.status === "fail") {
-          console.log(json.error);
-          return;
-        }
-        const entry = {
-          id: json.id,
-        };
-
-        // setCpass(entry);
-
-        setCpass((preState) => [...preState, Object.assign(entry, values)]);
-        props.onHide();
-
-        // props.setCpass((preState) => [
-        //   ...preState,
-        //   Object.assign(entry, values),
-        // ]);
-      });
+    setCpass((preState) => [...preState, Object.assign(entry, values)]);
+    props.onHide();
   };
   return (
     <Modal
@@ -148,6 +127,9 @@ function MyVerticallyCenteredModal(props) {
                     onChange={handleChange}
                     isInvalid={errors.url}
                   />
+                  {errors.url && (
+                    <h6 className="py-1 text-red-500">{errors.url}</h6>
+                  )}
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="token">
                   <Form.Label>Token</Form.Label>
@@ -190,25 +172,15 @@ const Cpass = () => {
   const [cpass, setCpass] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
 
-  useEffect(() => {
-    const path = "cpass";
-    const url = `http://localhost:5000/${path}`;
+  const getData = async () => {
+    const path = "cpaas/viewCpaas";
+    const json = await getApiCall(path);
+    console.log("json helper", json);
+    setCpass(json.data);
+  };
 
-    const requestOptions = {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    };
-    fetch(url, requestOptions)
-      .then((response) => response.json())
-      .then((json) => {
-        console.log("data api", json);
-        // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-        if (json.status === "fail") {
-          console.log(json.error);
-          return;
-        }
-        setCpass(json);
-      });
+  useEffect(() => {
+    getData();
   }, []);
 
   return (
@@ -252,9 +224,9 @@ const Cpass = () => {
 
             {cpass &&
               cpass.map((data) => (
-                <Col key={data.id} md={6} xl={4} className="mb-4">
+                <Col key={data._id} md={6} xl={4} className="mb-4">
                   <>
-                    <Link to={{ pathname: `/cpass/${data.id}`, data: data }}>
+                    <Link to={{ pathname: `/cpass/${data._id}`, data: data }}>
                       <Card.Body
                         className="shadow-1"
                         style={{ marginTop: "20px", background: "white" }}

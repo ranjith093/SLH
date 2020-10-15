@@ -4,6 +4,8 @@ import { Row, Col, Card, Table, Form, Button, Modal } from "react-bootstrap";
 import { Formik } from "formik";
 
 import MyVerticallyCenteredModalGet from "../../components/MyVerticallyCenteredModal";
+import { getApiCall, postApiCall } from "../../helpers/api-helper";
+import { v4 as uuid } from "uuid";
 
 const validate = (values) => {
   const errors = {};
@@ -17,10 +19,10 @@ const validate = (values) => {
   } else if (values.gateway.length > 10) {
     errors.gateway = "Must be 15 characters or less";
   }
-  if (!values.callerId) {
-    errors.callerId = "Required";
-  } else if (values.callerId.length > 20) {
-    errors.callerId = "Must be 15 characters or less";
+  if (!values.callerID) {
+    errors.callerID = "Required";
+  } else if (values.callerID.length > 20) {
+    errors.callerID = "Must be 15 characters or less";
   }
   if (!values.domain) {
     errors.domain = "Required";
@@ -35,51 +37,72 @@ const validate = (values) => {
 
 function MyVerticallyCenteredModal(props) {
   console.log("props", { ...props });
-  const { setAccounts, id, ...props1 } = props;
-  const passto = (entry, values) => {
-    console.log("values from modal pass to", values);
-  };
+  const { setAccounts, account, id, ...props1 } = props;
+  // console.log("account edit", account);
 
-  const onSubmit = (values) => {
+  const onSubmit = async (values) => {
     console.log("values ", { id, ...values });
 
-    const path = "cpass/addAccount";
-    const url = `http://localhost:5000/${path}`;
+    const body = { cpaasAccountId: id, id: uuid(), ...values };
 
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, ...values }),
-    };
-    return fetch(url, requestOptions)
-      .then((response) => response.json())
-      .then((json) => {
-        console.log("data api", json);
-        // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-        if (json.status === "fail") {
-          console.log(json.error);
-          return;
-        }
-        const entry = {
-          id: json.id,
-        };
+    // const path = "cpaasAcocunts/addCpaasAccount";
+    const path =
+      Object.keys(account).length !== 0
+        ? "cpaasAcocunts/updateCpaasAccount"
+        : "cpaasAcocunts/addCpaasAccount";
+    const json = await postApiCall(path, body);
+    console.log("json add account ", json);
+    // const entry = {
+    //   id: json.id,
+    // };
+    setAccounts((preState) => {
+      console.log("pre state set account", preState);
+      if (!json) {
+        return preState;
+      }
+      if (preState) {
+        return [...preState, body];
+      }
+      return [json];
+    });
+    props.onHide();
 
-        // setCpass(entry);
+    // const url = `http://localhost:5000/${path}`;
 
-        // setAccounts((preState) => [...preState, Object.assign(entry, values)]);
-        setAccounts((preState) => {
-          if (preState) {
-            return [...preState, values];
-          }
-          return [values];
-        });
-        props.onHide();
+    // const requestOptions = {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ id, ...values }),
+    // };
+    // return fetch(url, requestOptions)
+    //   .then((response) => response.json())
+    //   .then((json) => {
+    //     console.log("data api", json);
+    //     // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
+    //     if (json.status === "fail") {
+    //       console.log(json.error);
+    //       return;
+    //     }
+    //     const entry = {
+    //       id: json.id,
+    //     };
 
-        // props.setCpass((preState) => [
-        //   ...preState,
-        //   Object.assign(entry, values),
-        // ]);
-      });
+    //     // setCpass(entry);
+
+    //     // setAccounts((preState) => [...preState, Object.assign(entry, values)]);
+    //     setAccounts((preState) => {
+    //       if (preState) {
+    //         return [...preState, values];
+    //       }
+    //       return [values];
+    //     });
+    //     props.onHide();
+
+    //     // props.setCpass((preState) => [
+    //     //   ...preState,
+    //     //   Object.assign(entry, values),
+    //     // ]);
+    //   });
   };
   return (
     <Modal
@@ -96,8 +119,9 @@ function MyVerticallyCenteredModal(props) {
       <Modal.Body>
         <Formik
           // validationSchema={schema}
+          enableReinitialize={true}
           onSubmit={onSubmit}
-          initialValues={{}}
+          initialValues={account}
           validate={validate}
         >
           {({
@@ -117,6 +141,8 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="slashrtc"
                     onChange={handleChange}
+                    // value={account.name ? account.name : ""}
+                    value={values.name}
                     isValid={touched.name && !errors.name}
                     isInvalid={!!errors.name}
                   />
@@ -129,6 +155,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Control
                     type="text"
                     placeholder="www.slashrtc.com "
+                    value={values.domain}
                     onChange={handleChange}
                     isInvalid={!!errors.domain}
                   />
@@ -139,17 +166,19 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Control
                     type="text"
                     placeholder="Enter Gateway"
+                    value={values.gateway}
                     onChange={handleChange}
                     isInvalid={!!errors.gateway}
                   />
                 </Form.Group>
-                <Form.Group as={Col} md="6" controlId="callerId">
+                <Form.Group as={Col} md="6" controlId="callerID">
                   <Form.Label>Caller Id</Form.Label>
                   <Form.Control
                     type="text"
+                    value={values.callerID}
                     placeholder="Enter Caller Id"
                     onChange={handleChange}
-                    isInvalid={!!errors.callerId}
+                    isInvalid={!!errors.callerID}
                   />
                 </Form.Group>
               </Form.Row>
@@ -161,7 +190,7 @@ function MyVerticallyCenteredModal(props) {
                 />
               </Form.Group> */}
               <Button variant="primary" type="submit">
-                Submit
+                {Object.keys(account).length !== 0 ? "Update" : "Submit"}
               </Button>
             </Form>
           )}
@@ -172,35 +201,46 @@ function MyVerticallyCenteredModal(props) {
 }
 
 function Add(props) {
-  const id = props.location.data.id;
+  const id = props.location.data._id;
   const name = props.location.data.name;
   const url = props.location.data.url;
-  console.log(props.location.data);
+  console.log("props location data", props.location.data);
 
   const [accounts, setAccounts] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
 
+  const [account, setAccount] = useState({});
+
   const [deletConfirm, setDeletConfirm] = useState(false);
 
-  useEffect(() => {
-    const path = `cpass/getAccounts?id=${id}`;
-    const url = `http://localhost:5000/${path}`;
+  const getData = async () => {
+    const path = `cpaasAcocunts/viewCpaasAccount`;
+    const json = await getApiCall(path);
+    console.log("json account ", json);
+    setAccounts(json.data);
+  };
 
-    const requestOptions = {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    };
-    fetch(url, requestOptions)
-      .then((response) => response.json())
-      .then((json) => {
-        console.log("data api", json);
-        // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-        if (json.status === "fail") {
-          console.log(json.error);
-          return;
-        }
-        setAccounts(json.data);
-      });
+  useEffect(() => {
+    getData();
+
+    // const path = `cpass/getAccounts?id=${id}`;
+    // const url = `http://localhost:5000/${path}`;
+
+    // const requestOptions = {
+    //   method: "GET",
+    //   headers: { "Content-Type": "application/json" },
+    // };
+    // fetch(url, requestOptions)
+    //   .then((response) => response.json())
+    //   .then((json) => {
+    //     console.log("data api", json);
+    //     // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
+    //     if (json.status === "fail") {
+    //       console.log(json.error);
+    //       return;
+    //     }
+    //     setAccounts(json.data);
+    //   });
   }, []);
 
   return (
@@ -224,6 +264,7 @@ function Add(props) {
         onHide={() => setModalShow(false)}
         id={id}
         setAccounts={setAccounts}
+        account={account}
       />
       <MyVerticallyCenteredModalGet
         title="Are you sure want to Delete ?"
@@ -264,11 +305,11 @@ function Add(props) {
             <tbody>
               {accounts &&
                 accounts.map((data, i) => (
-                  <tr key={data.name}>
+                  <tr key={data._id}>
                     <th scope="row">{i + 1}</th>
                     <td>{data.name}</td>
                     <td>{data.gateway}</td>
-                    <td>{data.callerId}</td>
+                    <td>{data.callerID}</td>
                     <td>{data.domain}</td>
                     <td
                       style={
@@ -283,7 +324,10 @@ function Add(props) {
                         className="feather icon-edit
                        auth-icon "
                         style={{ cursor: "pointer" }}
-                        onClick={() => setModalShow(true)}
+                        onClick={() => {
+                          setAccount(data);
+                          setModalShow(true);
+                        }}
                       />
                       <i
                         className="feather icon-trash

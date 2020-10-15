@@ -8,15 +8,18 @@ import { AuthContext } from "../../../App/state/context";
 import "./../../../assets/scss/style.scss";
 import Aux from "../../../hoc/_Aux";
 import Breadcrumb from "../../../App/layout/AdminLayout/Breadcrumb";
+import { Spinner } from "react-bootstrap";
 
 const SignUp1 = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const { signIn, state } = useContext(AuthContext);
   // console.log("auth context in sign in", signIn);
 
   const login = () => {
     if (email && password) {
+      setLoading(true);
       signIn({ email, password });
     }
 
@@ -38,6 +41,7 @@ const SignUp1 = () => {
     return () => {};
   }, []);
 
+  console.log("state signin ", state);
   return (
     <Aux>
       <Breadcrumb />
@@ -94,7 +98,8 @@ const SignUp1 = () => {
                 </div>
               </div> */}
               <button className="btn btn-primary shadow-2 mb-4" onClick={login}>
-                Login
+                {loading ? <Spinner animation="border" /> : "login"}
+                {/* Login */}
               </button>
               <p className="mb-2 text-muted">
                 Forgot password?{" "}

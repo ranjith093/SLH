@@ -191,6 +191,7 @@ function MyVerticallyCenteredModal(props) {
       <Modal.Body>
         <Accordion defaultActiveKey="0">
           <div>hi</div>
+          {/* <Card>
             <Accordion.Toggle as={Button} variant="link" eventKey="0">
               Single Entry
             </Accordion.Toggle>

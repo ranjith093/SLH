@@ -53,21 +53,44 @@ const validate = (values) => {
 
 function MyVerticallyCenteredModal(props) {
   console.log("props", { ...props });
-  const { setCpass, ...props1 } = props;
-  const passto = (entry, values) => {
-    console.log("values from modal pass to", values);
-  };
+  const { setCpass, account, ...props1 } = props;
+  // const passto = (entry, values) => {
+  //   console.log("values from modal pass to", values);
+  // };
 
   const onSubmit = async (values) => {
     // console.log("values ", values);
-    const path = "cloudCarrier/addCloudCarrier";
-    const body = { id: uuid(), ...values };
+    const path =
+      Object.keys(account).length !== 0
+        ? "cloudCarrier/updateCloudCarrier"
+        : "cloudCarrier/addCloudCarrier";
+
+    const { _id, ...values1 } = values;
+
+    const body = {
+      id: Object.keys(account).length !== 0 ? _id : uuid(),
+      ...values1,
+    };
     const json = await postApiCall(path, body);
     const entry = {
       id: json.id,
     };
 
-    setCpass((preState) => [...preState, Object.assign(entry, values)]);
+    setCpass((preState) => {
+      console.log("pre state set account", preState);
+      if (!json) {
+        return preState;
+      }
+      if (preState) {
+        return preState.map((item) =>
+          item._id === _id ? { ...item, ...values1 } : item
+        );
+        // return [...preState, body];
+      }
+      return [json];
+    });
+
+    // setCpass((preState) => [...preState, Object.assign(entry, values)]);
     props.onHide();
     // const path = "dip/add";
     // const url = `http://localhost:5000/${path}`;
@@ -117,7 +140,7 @@ function MyVerticallyCenteredModal(props) {
         <Formik
           // validationSchema={schema}
           onSubmit={onSubmit}
-          initialValues={{}}
+          initialValues={account}
           validate={validate}
         >
           {({
@@ -137,6 +160,7 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="Enter Name"
                     onChange={handleChange}
+                    value={values.name}
                     isValid={touched.name && !errors.name}
                     isInvalid={!!errors.name}
                   />
@@ -145,6 +169,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Label>carrier</Form.Label>
                   <Form.Control
                     type="text"
+                    value={values.carrier}
                     placeholder="Enter carrier"
                     onChange={handleChange}
                     // isValid={touched.name && !errors.name}
@@ -164,6 +189,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Label>IP</Form.Label>
                   <Form.Control
                     type="text"
+                    value={values.ip}
                     placeholder="192.168.0.1"
                     onChange={handleChange}
                     isInvalid={!!errors.ip}
@@ -173,6 +199,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Label>Port</Form.Label>
                   <Form.Control
                     type="text"
+                    value={values.port}
                     placeholder="22"
                     onChange={handleChange}
                     isInvalid={!!errors.port}
@@ -208,7 +235,7 @@ function MyVerticallyCenteredModal(props) {
 const Cpass = () => {
   const [cpass, setCpass] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
-
+  const [account, setAccount] = useState({});
   const getData = async () => {
     const path = "cloudCarrier/viewCloudCarrier";
     const json = await getApiCall(path);
@@ -255,6 +282,7 @@ const Cpass = () => {
             show={modalShow}
             onHide={() => setModalShow(false)}
             setCpass={setCpass}
+            account={account}
           />
 
           <Row>
@@ -284,9 +312,20 @@ const Cpass = () => {
                       className="shadow-1"
                       style={{ marginTop: "20px", background: "white" }}
                     >
+                      <div className=" flex justify-end">
+                        <i
+                          className="feather icon-edit
+                       auth-icon "
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            setAccount(data);
+                            setModalShow(true);
+                          }}
+                        />
+                      </div>
                       <div className="row d-flex align-items-center mb-2">
                         <div className="col-9">
-                          <h3 className="f-w-300 d-flex align-items-center m-b-0">
+                          <h3 className="f-w-300 d-flex align-items-center m-b-0 capitalize">
                             {/* <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "} */}
                             {data.name}
                           </h3>

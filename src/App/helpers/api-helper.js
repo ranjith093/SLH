@@ -2,9 +2,11 @@ import { v4 as uuid } from "uuid";
 
 import config from "../../config";
 
-export const getApiCall = (path) => {
-  //   const path = "dip";
-  const url = `${config.defaultUrl}/${path}`;
+export const getApiCall = (path, id) => {
+  const filter = id && `?id=${id}`;
+
+  const url = `${config.defaultUrl}/${path}${filter ? filter : ""}`;
+  console.log("get url = ", url);
 
   const requestOptions = {
     method: "GET",
@@ -13,12 +15,9 @@ export const getApiCall = (path) => {
   return fetch(url, requestOptions)
     .then((response) => response.json())
     .then((json) => {
-      // console.log("data api", json);
-      // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-      if (json.status !== "success") {
-        // console.log(json.error);
-        return;
-      }
+      // if (json.status !== "success") {
+      //   return;
+      // }
       return json;
     });
 };

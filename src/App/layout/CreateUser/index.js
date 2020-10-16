@@ -239,7 +239,7 @@ const Cpass = () => {
       <nav className=" px-2">
         <div className="-mb-px flex justify-center">
           <a
-            className={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
+            className={`no-underline  text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
               index == 0
                 ? "border-teal-dark"
                 : "border-transparent text-gray-900"
@@ -247,6 +247,7 @@ const Cpass = () => {
             href="#"
             onClick={useCallback(() => set(0), [])}
           >
+            {/* <i className="fa fa-home fa-2x" aria-hidden="true" /> */}
             Home
           </a>
           <a

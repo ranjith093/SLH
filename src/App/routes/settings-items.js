@@ -35,6 +35,12 @@ export default {
           type: "group",
           icon: "fa-files-o",
         },
+        // {
+        //   id: "formtest",
+        //   title: "Form",
+        //   type: "group",
+        //   icon: "fa-file",
+        // },
       ],
     },
   ],

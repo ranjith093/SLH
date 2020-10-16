@@ -8,13 +8,16 @@ import {
   Form,
   Button,
   Modal,
-  Accordion
+  Accordion,
 } from "react-bootstrap";
 import { Formik } from "formik";
 
 import MyVerticallyCenteredModalGet from "../../components/MyVerticallyCenteredModal";
 import { getApiCall, postApiCall } from "../../helpers/api-helper";
+
+import TableSkeletonCard from "../../components/TableSkeletonCard";
 import { v4 as uuid } from "uuid";
+import config from "../../../config";
 const validate = (values) => {
   // console.log("validate");
   const errors = {};
@@ -80,9 +83,6 @@ const validateRange = (values) => {
 function MyVerticallyCenteredModal(props) {
   console.log("props", { ...props });
   const { setAccounts, account, id, ...props1 } = props;
-  const passto = (entry, values) => {
-    console.log("values from modal pass to", values);
-  };
 
   const onSubmit = async (values) => {
     console.log("values ", { id, ...values });
@@ -112,12 +112,20 @@ function MyVerticallyCenteredModal(props) {
     props.onHide();
   };
   const onSubmitRange = async (values) => {
-    console.log("submit range");
-    console.log("values ", { id, ...values });
+    console.log("range values", values);
+
+    // const numbers = [];
+    // let i;
+    // for (i = values.numberFrom; (i = values.numberTo); i++) {
+    //   numbers.push({
+    //     number: i,
+    //   });
+    // }
+
+    // console.log("numbers push", numbers);
 
     const body = { cloudCarrierId: id, id: uuid(), ...values };
 
-    // const path = "cpaasAcocunts/addCpaasAccount";
     const path =
       Object.keys(account).length !== 0
         ? "cloudCarrierNumbers/addCloudCarrierNumber"
@@ -138,44 +146,6 @@ function MyVerticallyCenteredModal(props) {
       return [json];
     });
     props.onHide();
-
-    // const path = "dip/addNumber";
-    // const url = `http://localhost:5000/${path}`;
-
-    // const requestOptions = {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ id, ...values }),
-    // };
-    // return fetch(url, requestOptions)
-    //   .then((response) => response.json())
-    //   .then((json) => {
-    //     console.log("data api", json);
-    //     // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-    //     if (json.status === "fail") {
-    //       console.log(json.error);
-    //       return;
-    //     }
-    //     const entry = {
-    //       id: json.id,
-    //     };
-
-    //     // setCpass(entry);
-
-    //     // setAccounts((preState) => [...preState, Object.assign(entry, values)]);
-    //     setAccounts((preState) => {
-    //       if (preState) {
-    //         return [...preState, values];
-    //       }
-    //       return [values];
-    //     });
-    //     props.onHide();
-
-    //     // props.setCpass((preState) => [
-    //     //   ...preState,
-    //     //   Object.assign(entry, values),
-    //     // ]);
-    //   });
   };
 
   return (
@@ -333,45 +303,66 @@ function Add(props) {
   const [accounts, setAccounts] = useState([]);
 
   const [account, setAccount] = useState({});
+  const [number, setnumber] = useState();
 
   const [modalShow, setModalShow] = React.useState(false);
   const [deletConfirm, setDeletConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const getData = async () => {
     const path = `cloudCarrierNumbers/viewCloudCarrierNumber`;
-    const json = await getApiCall(path);
+    const json = await getApiCall(path, id);
     console.log("json account ", json);
     setAccounts(json.data);
+    setLoading(false);
   };
 
   useEffect(() => {
+    setLoading(true);
     getData();
-    // const path = `dip/getNumber?id=${id}`;
-    // const url = `http://localhost:5000/${path}`;
-
-    // const requestOptions = {
-    //   method: "GET",
-    //   headers: { "Content-Type": "application/json" },
-    // };
-    // fetch(url, requestOptions)
-    //   .then((response) => response.json())
-    //   .then((json) => {
-    //     console.log("data api server", json);
-    //     // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-    //     if (json.status === "fail") {
-    //       console.log(json.error);
-    //       return;
-    //     }
-    //     setAccounts(json.data);
-    //   });
   }, []);
+
+  const onDelete = async () => {
+    const path = "cloudCarrierNumbers/deleteSingleCloudCarrierNumber";
+
+    const url = `${config.defaultUrl}/${path}?id=${account}&number=${number}`;
+    console.log("get url = ", url);
+
+    const requestOptions = {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    };
+    return fetch(url, requestOptions)
+      .then((response) => response.json())
+      .then((json) => {
+        // if (json.status !== "success") {
+        //   return;
+        // }
+        // return json;
+        if (json) {
+          setAccounts((preState) => {
+            if (preState) {
+              setDeletConfirm(false);
+
+              // console.log("preState", preState);
+              const result = preState.map((item) => ({
+                ...item,
+                numbers: item.numbers.filter(
+                  (child) => child.number !== number
+                ),
+              }));
+              console.log("result", result);
+              return result;
+              // return [...preState, body];
+            }
+            return [];
+          });
+        }
+      });
+  };
 
   return (
     <Aux>
-      {/* <div>{id}</div>
-      <div>{url}</div>
-      <div>{name}</div> */}
-
       <div
         style={{
           display: "flex",
@@ -400,17 +391,14 @@ function Add(props) {
               justifyContent: "flex-end",
             }}
           >
-            <Button>Yes</Button>
-            <Button>No</Button>
+            <Button onClick={onDelete}>Yes</Button>
+            <Button onClick={() => setDeletConfirm(false)}>No</Button>
           </div>
         }
       />
       <Card>
         <Card.Header>
           <Card.Title as="h5">Numbers</Card.Title>
-          {/* <span className="d-block m-t-5">
-            use props <code>hover</code> with <code>Table</code> component
-          </span> */}
         </Card.Header>
         <Card.Body>
           <Table responsive hover>
@@ -425,30 +413,30 @@ function Add(props) {
               </tr>
             </thead>
             <tbody>
+              {loading && <TableSkeletonCard col={4} />}
               {accounts &&
-                accounts.map((data, i) => (
-                  <tr key={data.name}>
-                    <th scope="row">{i + 1}</th>
-                    <td>{data.number}</td>
-                    <td>{data.status}</td>
-                    {/* <td>{data.port}</td>
-                    <td>{data.type}</td> */}
-                    <td style={{}}>
-                      <i
-                        className="feather icon-edit
-                       auth-icon "
-                        style={{ cursor: "pointer" }}
-                        onClick={() => setModalShow(true)}
-                      />
-                      <i
-                        className="feather icon-trash
+                accounts.map((data) =>
+                  data.numbers.map((number, i) => (
+                    <tr key={number.number}>
+                      <th scope="row">{i + 1}</th>
+                      <td>{number.number}</td>
+                      <td>{data.status}</td>
+
+                      <td style={{}}>
+                        <i
+                          className="feather icon-trash
                        auth-icon ml-3"
-                        style={{ cursor: "pointer" }}
-                        onClick={() => setDeletConfirm(true)}
-                      />
-                    </td>
-                  </tr>
-                ))}
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            setnumber(number.number);
+                            setAccount(data._id);
+                            setDeletConfirm(true);
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  ))
+                )}
             </tbody>
           </Table>
         </Card.Body>

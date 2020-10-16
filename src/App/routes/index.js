@@ -36,6 +36,10 @@ const MediaServer = React.lazy(() => import("../layout/MediaServer"));
 //create user
 const CreateUser = React.lazy(() => import("../layout/CreateUser"));
 
+//Form
+const FormTest = React.lazy(() => import("../layout/Form"));
+const FormTestAdd = React.lazy(() => import("../layout/Form/add"));
+
 const routes = [
   {
     path: "/dashboard/default",
@@ -70,6 +74,8 @@ const routes = [
     name: "Create user",
     component: CreateUser,
   },
+  { path: "/formtest", exact: true, name: "From", component: FormTest },
+  { path: "/formtest/:id", exact: true, name: "From", component: FormTestAdd },
 ];
 
 export default routes;

@@ -11040,6 +11040,11 @@ tiny-invariant@^1.0.2:
   resolved "https://registry.yarnpkg.com/tiny-invariant/-/tiny-invariant-1.1.0.tgz#634c5f8efdc27714b7f386c35e6760991d230875"
   integrity sha512-ytxQvrb1cPc9WBEI/HSeYYoGD0kWnGEOR8RY6KomWLBVhqz0RgTwVO9dLrGz7dC+nN9llyI7OKAgRq8Vq4ZBSw==
 
+tiny-skeleton-loader-react@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/tiny-skeleton-loader-react/-/tiny-skeleton-loader-react-1.1.4.tgz#b3e4dea5d3398f6882e9eaafeccb584cecc9df12"
+  integrity sha512-FsgPOAP0XuTNHWxFMkpe0m9f61SwlJJmXaSim9/jR29fDHr87WsaNK3duNqT5juN9d48hZVV8QOCFy9/VLNafg==
+
 tiny-warning@^1.0.0, tiny-warning@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.3.tgz#94a30db453df4c643d0fd566060d60a875d84754"

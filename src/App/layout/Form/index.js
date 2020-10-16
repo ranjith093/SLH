@@ -10,8 +10,6 @@ import {
   Spinner,
 } from "react-bootstrap";
 
-import SkeletonCard from "../../components/SkeletonCard";
-
 import { Formik } from "formik";
 
 import Aux from "../../../hoc/_Aux";
@@ -191,18 +189,14 @@ const Cpass = () => {
   const [account, setAccount] = useState({});
   const [deletConfirm, setDeletConfirm] = useState(false);
 
-  const [loading, setloading] = useState(false);
-
   const getData = async () => {
     const path = "cpaas/viewCpaas";
     const json = await getApiCall(path);
     console.log("json helper", json);
     setCpass(json.data);
-    setloading(false);
   };
 
   useEffect(() => {
-    setloading(true);
     getData();
   }, []);
   const onDelete = async () => {
@@ -269,8 +263,6 @@ const Cpass = () => {
           />
 
           <Row>
-            {loading && <SkeletonCard />}
-
             {cpass &&
               cpass.map((data) => (
                 <Col key={data._id} md={6} xl={4} className="mb-4">

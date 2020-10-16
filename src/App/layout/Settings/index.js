@@ -10,7 +10,7 @@ function Index() {
       <div className="m-4" key={data.id}>
         <>
           <Link to={{ pathname: `/${data.id}`, data: data }}>
-            <div className="w-40 h-40 bg-white shadow-md rounded-md flex flex-col justify-center items-center">
+            <div className="w-40 h-40 bg-white shadow-md rounded-md flex flex-col justify-center items-center transform hover:scale-110 hover:shadow-lg duration-300">
               <i
                 class={`fa ${data.icon} fa-4x mb-2 `}
                 style={{ color: "#3F4D67" }}

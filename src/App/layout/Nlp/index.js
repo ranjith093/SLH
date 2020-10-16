@@ -57,9 +57,7 @@ const validate = (values) => {
 function MyVerticallyCenteredModal(props) {
   console.log("props", { ...props });
   const { setCpass, nlp, ...props1 } = props;
-  const passto = (entry, values) => {
-    console.log("values from modal pass to", values);
-  };
+
   console.log("nlp", nlp);
 
   const onSubmit = async (values) => {

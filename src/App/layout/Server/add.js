@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from "react";
 import Aux from "../../../hoc/_Aux";
 import {
-  Row,
   Col,
   Card,
   Table,
   Form,
   Button,
   Modal,
-  Dropdown,
-  DropdownButton,
+  Spinner,
 } from "react-bootstrap";
 import { Formik } from "formik";
 
 import MyVerticallyCenteredModalGet from "../../components/MyVerticallyCenteredModal";
 import { getApiCall, postApiCall } from "../../helpers/api-helper";
 import { v4 as uuid } from "uuid";
+
+import TableSkeletonCard from "../../components/TableSkeletonCard";
 const validate = (values) => {
   // console.log("validate");
   const errors = {};
@@ -63,84 +63,42 @@ const validate = (values) => {
 };
 
 function MyVerticallyCenteredModal(props) {
-  console.log("props", { ...props });
   const { setAccounts, id, account, ...props1 } = props;
-  // const passto = (entry, values) => {
-  //   console.log("values from modal pass to", values);
-  // };
-  console.log("account edit", account);
+  const [loading, setLoading] = useState(false);
+
   const onSubmit = async (values) => {
-    console.log("values ", { id, ...values });
+    setLoading(true);
     const { _id, ...values1 } = values;
 
-    // const path = "serverDatabase/addServerDatabase";
     const body = {
       serverId: id,
       id: Object.keys(account).length !== 0 ? _id : uuid(),
       ...values1,
     };
 
-    // const path = "cpaasAcocunts/addCpaasAccount";
     const path =
       Object.keys(account).length !== 0
         ? "serverDatabase/updateServerDatabase"
         : "serverDatabase/addServerDatabase";
     const json = await postApiCall(path, body);
-    console.log("json add account ", json);
-    // const entry = {
-    //   id: json.id,
-    // };
+
     setAccounts((preState) => {
       console.log("pre state set account", preState);
       if (!json) {
         return preState;
       }
       if (preState) {
-        return preState.map((item) =>
-          item._id === _id ? { ...item, ...values1 } : item
-        );
-        // return [...preState, body];
+        if (Object.keys(account).length !== 0) {
+          return preState.map((item) =>
+            item._id === _id ? { ...item, ...values1 } : item
+          );
+        }
+        return [...preState, body];
       }
       return [json];
     });
+    setLoading(false);
     props.onHide();
-
-    // const url = `http://localhost:5000/${path}`;
-
-    // const requestOptions = {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ id, ...values }),
-    // };
-    // return fetch(url, requestOptions)
-    //   .then((response) => response.json())
-    //   .then((json) => {
-    //     console.log("data api", json);
-    //     // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-    //     if (json.status === "fail") {
-    //       console.log(json.error);
-    //       return;
-    //     }
-    //     const entry = {
-    //       id: json.id,
-    //     };
-
-    //     // setCpass(entry);
-
-    //     // setAccounts((preState) => [...preState, Object.assign(entry, values)]);
-    //     setAccounts((preState) => {
-    //       if (preState) {
-    //         return [...preState, values];
-    //       }
-    //       return [values];
-    //     });
-    //     props.onHide();
-
-    //     // props.setCpass((preState) => [
-    //     //   ...preState,
-    //     //   Object.assign(entry, values),
-    //     // ]);
-    //   });
   };
   return (
     <Modal
@@ -182,9 +140,9 @@ function MyVerticallyCenteredModal(props) {
                     isValid={touched.name && !errors.name}
                     isInvalid={!!errors.name}
                   />
-                  {/* <Form.Text className="text-muted">
-                          We'll never share your email with anyone else.
-                        </Form.Text> */}
+                  {errors.name && (
+                    <h6 className="py-1 text-red-500">{errors.name}</h6>
+                  )}
                 </Form.Group>
 
                 <Form.Group as={Col} md="6" controlId="ip">
@@ -192,10 +150,14 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Control
                     type="text"
                     placeholder="192.169.0.1"
+                    isValid={touched.ip && !errors.ip}
                     onChange={handleChange}
                     value={values.ip}
                     isInvalid={!!errors.ip}
                   />
+                  {errors.ip && (
+                    <h6 className="py-1 text-red-500">{errors.ip}</h6>
+                  )}
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="port">
                   <Form.Label>Port</Form.Label>
@@ -204,8 +166,12 @@ function MyVerticallyCenteredModal(props) {
                     placeholder="22"
                     value={values.port}
                     onChange={handleChange}
+                    isValid={touched.ip && !errors.port}
                     isInvalid={!!errors.port}
                   />
+                  {errors.port && (
+                    <h6 className="py-1 text-red-500">{errors.port}</h6>
+                  )}
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="publicIp">
                   <Form.Label>publicIp</Form.Label>
@@ -214,6 +180,7 @@ function MyVerticallyCenteredModal(props) {
                     placeholder="22"
                     value={values.publicIp}
                     onChange={handleChange}
+                    // isValid={touched.ip && !errors.port}
                     // isInvalid={!!errors.publicIp}
                   />
                 </Form.Group>
@@ -229,11 +196,7 @@ function MyVerticallyCenteredModal(props) {
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="type">
                   <Form.Label>Type</Form.Label>
-                  {/* <Form.Control
-                    type="text"
-                    placeholder="Type"
-                    onChange={handleChange}
-                  /> */}
+
                   <Form.Control
                     size="sm"
                     as="select"
@@ -247,18 +210,13 @@ function MyVerticallyCenteredModal(props) {
                     <option value="mysql"> MYSQL</option>
                     <option value="mysql"> Elastic</option>
                   </Form.Control>
+                  {errors.type && (
+                    <h6 className="py-1 text-red-500">{errors.type}</h6>
+                  )}
                 </Form.Group>
               </Form.Row>
-
-              {/* <Form.Group controlId="checkBox">
-                <Form.Check
-                  type="checkbox"
-                  label="Check me out"
-                  onChange={handleChange}
-                />
-              </Form.Group> */}
-              <Button variant="primary" type="submit">
-                Submit
+              <Button variant="primary" disabled={loading} type="submit">
+                {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
               </Button>
             </Form>
           )}
@@ -273,39 +231,24 @@ function Add(props) {
   const name = props.location.data.name;
   const url = props.location.data.url;
 
-  console.log(props.location.data);
-
   const [accounts, setAccounts] = useState([]);
   const [account, setAccount] = useState({});
   const [modalShow, setModalShow] = React.useState(false);
   const [deletConfirm, setDeletConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const getData = async () => {
     const path = "serverDatabase/viewServerDatabase";
     const json = await getApiCall(path);
-    console.log("json helper", json);
-    setAccounts(json.data);
+
+    if (json) {
+      setAccounts(json.data);
+      setLoading(false);
+    }
   };
   useEffect(() => {
+    setLoading(true);
     getData();
-    // const path = `server/getDatabase?id=${id}`;
-    // const url = `http://localhost:5000/${path}`;
-
-    // const requestOptions = {
-    //   method: "GET",
-    //   headers: { "Content-Type": "application/json" },
-    // };
-    // fetch(url, requestOptions)
-    //   .then((response) => response.json())
-    //   .then((json) => {
-    //     console.log("data api server", json);
-    //     // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-    //     if (json.status === "fail") {
-    //       console.log(json.error);
-    //       return;
-    //     }
-    //     setAccounts(json.data);
-    //   });
   }, []);
 
   const onDelete = async () => {
@@ -316,8 +259,6 @@ function Add(props) {
     const json = await postApiCall(path, body);
     if (json) {
       setAccounts((preState) => {
-        console.log("pre state set account", preState);
-
         if (preState) {
           setDeletConfirm(false);
           return preState.filter((item) => item._id !== account._id);
@@ -330,17 +271,19 @@ function Add(props) {
 
   return (
     <Aux>
-      {/* <div>{id}</div>
-      <div>{url}</div>
-      <div>{name}</div> */}
-
       <div
         style={{
           display: "flex",
           justifyContent: "flex-end",
         }}
       >
-        <Button variant="primary" onClick={() => setModalShow(true)}>
+        <Button
+          variant="primary"
+          onClick={() => {
+            setAccount({});
+            setModalShow(true);
+          }}
+        >
           Add
         </Button>
       </div>
@@ -370,9 +313,6 @@ function Add(props) {
       <Card>
         <Card.Header>
           <Card.Title as="h5">Databases</Card.Title>
-          {/* <span className="d-block m-t-5">
-            use props <code>hover</code> with <code>Table</code> component
-          </span> */}
         </Card.Header>
         <Card.Body>
           <Table responsive hover>
@@ -387,6 +327,7 @@ function Add(props) {
               </tr>
             </thead>
             <tbody>
+              {loading && <TableSkeletonCard col={6} />}
               {accounts &&
                 accounts.map((data, i) => (
                   <tr key={data.name}>

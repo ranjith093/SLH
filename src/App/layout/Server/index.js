@@ -1,25 +1,17 @@
 import React, { useEffect, useState } from "react";
-import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Button,
-  InputGroup,
-  FormControl,
-  DropdownButton,
-  Dropdown,
-  Modal,
-} from "react-bootstrap";
+import { Row, Col, Card, Form, Button, Modal, Spinner } from "react-bootstrap";
 
 import { Formik } from "formik";
 
 import Aux from "../../../hoc/_Aux";
 
-import { requestQuery } from "../../helpers/apirequest";
 import { Link } from "react-router-dom";
 import { getApiCall, postApiCall } from "../../helpers/api-helper";
+import MyVerticallyCenteredModalGet from "../../components/MyVerticallyCenteredModal";
 import { v4 as uuid } from "uuid";
+
+import SkeletonCard from "../../components/SkeletonCard";
+
 const validate = (values) => {
   // console.log("validate");
   const errors = {};
@@ -54,14 +46,11 @@ const validate = (values) => {
 function MyVerticallyCenteredModal(props) {
   console.log("props", { ...props });
   const { setCpass, account, ...props1 } = props;
-  // const passto = (entry, values) => {
-  //   console.log("values from modal pass to", values);
-  // };
+
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (values) => {
-    // console.log("values ", values);
-
-    // const path = "server/addServer";
+    setLoading(true);
     const path =
       Object.keys(account).length !== 0
         ? "server/updateServer"
@@ -73,57 +62,25 @@ function MyVerticallyCenteredModal(props) {
       ...values1,
     };
     const json = await postApiCall(path, body);
-    const entry = {
-      id: json.id,
-    };
-    // setCpass((preState) => [...preState, Object.assign(entry, values)]);
+
     setCpass((preState) => {
       console.log("pre state set account", preState);
       if (!json) {
         return preState;
       }
       if (preState) {
-        return preState.map((item) =>
-          item._id === _id ? { ...item, ...values1 } : item
-        );
-        // return [...preState, body];
+        if (Object.keys(account).length !== 0) {
+          return preState.map((item) =>
+            item._id === _id ? { ...item, ...values1 } : item
+          );
+        }
+
+        return [...preState, body];
       }
       return [json];
     });
-
+    setLoading(false);
     props.onHide();
-
-    // const path = "server/add";
-    // const url = `http://localhost:5000/${path}`;
-
-    // const requestOptions = {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(values),
-    // };
-    // return fetch(url, requestOptions)
-    //   .then((response) => response.json())
-    //   .then((json) => {
-    //     console.log("data api", json);
-    //     // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-    //     if (json.status === "fail") {
-    //       console.log(json.error);
-    //       return;
-    //     }
-    //     const entry = {
-    //       id: json.id,
-    //     };
-
-    //     // setCpass(entry);
-
-    //     setCpass((preState) => [...preState, Object.assign(entry, values)]);
-    //     props.onHide();
-
-    //     // props.setCpass((preState) => [
-    //     //   ...preState,
-    //     //   Object.assign(entry, values),
-    //     // ]);
-    //   });
   };
   return (
     <Modal
@@ -163,9 +120,9 @@ function MyVerticallyCenteredModal(props) {
                     isValid={touched.name && !errors.name}
                     isInvalid={!!errors.name}
                   />
-                  {/* <Form.Text className="text-muted">
-                          We'll never share your email with anyone else.
-                        </Form.Text> */}
+                  {errors.name && (
+                    <h6 className="py-1 text-red-500">{errors.name}</h6>
+                  )}
                 </Form.Group>
 
                 <Form.Group as={Col} md="6" controlId="ip">
@@ -175,8 +132,12 @@ function MyVerticallyCenteredModal(props) {
                     value={values.ip}
                     placeholder="192.168.0.1"
                     onChange={handleChange}
+                    isValid={touched.ip && !errors.ip}
                     isInvalid={!!errors.ip}
                   />
+                  {errors.ip && (
+                    <h6 className="py-1 text-red-500">{errors.ip}</h6>
+                  )}
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="port">
                   <Form.Label>Port</Form.Label>
@@ -185,27 +146,17 @@ function MyVerticallyCenteredModal(props) {
                     placeholder="22"
                     value={values.port}
                     onChange={handleChange}
+                    isValid={touched.port && !errors.port}
                     isInvalid={!!errors.port}
                   />
+                  {errors.port && (
+                    <h6 className="py-1 text-red-500">{errors.port}</h6>
+                  )}
                 </Form.Group>
-                {/* <Form.Group as={Col} md="6" controlId="key">
-                  <Form.Label>Key</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Key"
-                    onChange={handleChange}
-                  />
-                </Form.Group> */}
               </Form.Row>
-              {/* <Form.Group controlId="checkBox">
-                <Form.Check
-                  type="checkbox"
-                  label="Check me out"
-                  onChange={handleChange}
-                />
-              </Form.Group> */}
-              <Button variant="primary" type="submit">
-                Submit
+
+              <Button variant="primary" disabled={loading} type="submit">
+                {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
               </Button>
             </Form>
           )}
@@ -218,36 +169,41 @@ function MyVerticallyCenteredModal(props) {
 const Cpass = () => {
   const [cpass, setCpass] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
-
   const [account, setAccount] = useState({});
+  const [deletConfirm, setDeletConfirm] = useState(false);
+  const [loading, setloading] = useState(false);
+
   const getData = async () => {
     const path = "server/viewServer";
     const json = await getApiCall(path);
     console.log("json helper", json);
     setCpass(json.data);
+    setloading(false);
   };
   useEffect(() => {
+    setloading(true);
     getData();
-
-    // const path = "server";
-    // const url = `http://localhost:5000/${path}`;
-
-    // const requestOptions = {
-    //   method: "GET",
-    //   headers: { "Content-Type": "application/json" },
-    // };
-    // fetch(url, requestOptions)
-    //   .then((response) => response.json())
-    //   .then((json) => {
-    //     console.log("data api", json);
-    //     // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
-    //     if (json.status === "fail") {
-    //       console.log(json.error);
-    //       return;
-    //     }
-    //     setCpass(json);
-    //   });
   }, []);
+
+  const onDelete = async () => {
+    const path = "server/deleteServer";
+
+    const body = { id: account._id };
+
+    const json = await postApiCall(path, body);
+    if (json) {
+      setCpass((preState) => {
+        console.log("pre state set account", preState);
+
+        if (preState) {
+          return preState.filter((item) => item._id !== account._id);
+          // return [...preState, body];
+        }
+        return [];
+      });
+    }
+    setDeletConfirm(false);
+  };
 
   return (
     <Aux>
@@ -259,7 +215,13 @@ const Cpass = () => {
               justifyContent: "flex-end",
             }}
           >
-            <Button variant="primary" onClick={() => setModalShow(true)}>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setAccount({});
+                setModalShow(true);
+              }}
+            >
               Add
             </Button>
           </div>
@@ -269,26 +231,25 @@ const Cpass = () => {
             setCpass={setCpass}
             account={account}
           />
+          <MyVerticallyCenteredModalGet
+            title="Are you sure want to Delete ?"
+            show={deletConfirm}
+            onHide={() => setDeletConfirm(false)}
+            body={
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Button onClick={onDelete}>Yes</Button>
+                <Button onClick={() => setDeletConfirm(false)}>No</Button>
+              </div>
+            }
+          />
 
           <Row>
-            {/* EXPECTED Cpass  
-              cpass=   [
-                  {
-                      "id": "5f804458e318062dd0d888ba",
-                      "name": "name",
-                      "url": "url",
-                      "token": "token ",
-                      "key": "key"
-                  },
-                  {
-                      "id": "5f804603e318062dd0d888bb",
-                      "name": "vedantu",
-                      "url": "vedantu.slashrtc.in",
-                      "token": "vedantuGateway",
-                      "key": "507130"
-                  }
-              ] */}
-
+            {loading && <SkeletonCard />}
             {cpass &&
               cpass.map((data) => (
                 <Col key={data.id} md={6} xl={4} className="mb-4">
@@ -305,6 +266,15 @@ const Cpass = () => {
                           onClick={() => {
                             setAccount(data);
                             setModalShow(true);
+                          }}
+                        />
+                        <i
+                          className="feather icon-trash
+                       auth-icon ml-3"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            setAccount(data);
+                            setDeletConfirm(true);
                           }}
                         />
                       </div>

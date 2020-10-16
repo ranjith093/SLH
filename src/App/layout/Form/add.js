@@ -5,8 +5,6 @@ import { Formik } from "formik";
 
 import MyVerticallyCenteredModalGet from "../../components/MyVerticallyCenteredModal";
 import { getApiCall, postApiCall } from "../../helpers/api-helper";
-
-import TableSkeletonCard from "../../components/TableSkeletonCard";
 import { v4 as uuid } from "uuid";
 
 const validate = (values) => {
@@ -38,10 +36,13 @@ const validate = (values) => {
 };
 
 function MyVerticallyCenteredModal(props) {
+  console.log("props", { ...props });
   const { setAccounts, account, id, ...props1 } = props;
   // console.log("account edit", account);
 
   const onSubmit = async (values) => {
+    console.log("values ", { id, ...values });
+
     const { _id, ...values1 } = values;
 
     const body = {
@@ -50,29 +51,67 @@ function MyVerticallyCenteredModal(props) {
       ...values1,
     };
 
+    // const path = "cpaasAcocunts/addCpaasAccount";
     const path =
       Object.keys(account).length !== 0
         ? "cpaasAcocunts/updateCpaasAccount"
         : "cpaasAcocunts/addCpaasAccount";
     const json = await postApiCall(path, body);
-
+    console.log("json add account  ", json);
+    // const entry = {
+    //   id: json.id,
+    // };
     setAccounts((preState) => {
       console.log("pre state set account", preState);
       if (!json) {
         return preState;
       }
       if (preState) {
-        if (Object.keys(account).length !== 0) {
-          return preState.map((item) =>
-            item._id === _id ? { ...item, ...values1 } : item
-          );
-        }
-
-        return [...preState, body];
+        return preState.map((item) =>
+          item._id === _id ? { ...item, ...values1 } : item
+        );
+        // return [...preState, body];
       }
       return [json];
     });
     props.onHide();
+
+    // const url = `http://localhost:5000/${path}`;
+
+    // const requestOptions = {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ id, ...values }),
+    // };
+    // return fetch(url, requestOptions)
+    //   .then((response) => response.json())
+    //   .then((json) => {
+    //     console.log("data api", json);
+    //     // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
+    //     if (json.status === "fail") {
+    //       console.log(json.error);
+    //       return;
+    //     }
+    //     const entry = {
+    //       id: json.id,
+    //     };
+
+    //     // setCpass(entry);
+
+    //     // setAccounts((preState) => [...preState, Object.assign(entry, values)]);
+    //     setAccounts((preState) => {
+    //       if (preState) {
+    //         return [...preState, values];
+    //       }
+    //       return [values];
+    //     });
+    //     props.onHide();
+
+    //     // props.setCpass((preState) => [
+    //     //   ...preState,
+    //     //   Object.assign(entry, values),
+    //     // ]);
+    //   });
   };
   return (
     <Modal
@@ -111,13 +150,14 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="slashrtc"
                     onChange={handleChange}
+                    // value={account.name ? account.name : ""}
                     value={values.name}
                     isValid={touched.name && !errors.name}
                     isInvalid={!!errors.name}
                   />
-                  {errors.name && (
-                    <h6 className="py-1 text-red-500">{errors.name}</h6>
-                  )}
+                  {/* <Form.Text className="text-muted">
+                          We'll never share your email with anyone else.
+                        </Form.Text> */}
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="domain">
                   <Form.Label>Domain</Form.Label>
@@ -128,9 +168,6 @@ function MyVerticallyCenteredModal(props) {
                     onChange={handleChange}
                     isInvalid={!!errors.domain}
                   />
-                  {errors.domain && (
-                    <h6 className="py-1 text-red-500">{errors.domain}</h6>
-                  )}
                 </Form.Group>
 
                 <Form.Group as={Col} md="6" controlId="gateway">
@@ -142,9 +179,6 @@ function MyVerticallyCenteredModal(props) {
                     onChange={handleChange}
                     isInvalid={!!errors.gateway}
                   />
-                  {errors.gateway && (
-                    <h6 className="py-1 text-red-500">{errors.gateway}</h6>
-                  )}
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="callerID">
                   <Form.Label>Caller Id</Form.Label>
@@ -155,12 +189,15 @@ function MyVerticallyCenteredModal(props) {
                     onChange={handleChange}
                     isInvalid={!!errors.callerID}
                   />
-                  {errors.callerID && (
-                    <h6 className="py-1 text-red-500">{errors.callerID}</h6>
-                  )}
                 </Form.Group>
               </Form.Row>
-
+              {/* <Form.Group controlId="checkBox">
+                <Form.Check
+                  type="checkbox"
+                  label="Check me out"
+                  onChange={handleChange}
+                />
+              </Form.Group> */}
               <Button variant="primary" type="submit">
                 {Object.keys(account).length !== 0 ? "Update" : "Submit"}
               </Button>
@@ -176,6 +213,7 @@ function Add(props) {
   const id = props.location.data._id;
   const name = props.location.data.name;
   const url = props.location.data.url;
+  console.log("props location data", props.location.data);
 
   const [accounts, setAccounts] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
@@ -184,21 +222,36 @@ function Add(props) {
 
   const [deletConfirm, setDeletConfirm] = useState(false);
 
-  const [loading, setLoading] = useState(false);
-
   const getData = async () => {
-    const path = `cpaasAcocunts/viewCpaasAccountById`;
-    const json = await getApiCall(path, id);
+    const path = `cpaasAcocunts/viewCpaasAccount`;
+    const json = await getApiCall(path);
     console.log("json account ", json);
     if (json) {
       setAccounts(json.data);
-      setLoading(false);
     }
   };
 
   useEffect(() => {
-    setLoading(true);
     getData();
+
+    // const path = `cpass/getAccounts?id=${id}`;
+    // const url = `http://localhost:5000/${path}`;
+
+    // const requestOptions = {
+    //   method: "GET",
+    //   headers: { "Content-Type": "application/json" },
+    // };
+    // fetch(url, requestOptions)
+    //   .then((response) => response.json())
+    //   .then((json) => {
+    //     console.log("data api", json);
+    //     // {status: "success", id: "5f803ae8a4f3cd169bfe0740"}
+    //     if (json.status === "fail") {
+    //       console.log(json.error);
+    //       return;
+    //     }
+    //     setAccounts(json.data);
+    //   });
   }, []);
 
   const onDelete = async () => {
@@ -209,6 +262,8 @@ function Add(props) {
     const json = await postApiCall(path, body);
     if (json) {
       setAccounts((preState) => {
+        console.log("pre state set account", preState);
+
         if (preState) {
           setDeletConfirm(false);
           return preState.filter((item) => item._id !== account._id);
@@ -221,19 +276,17 @@ function Add(props) {
 
   return (
     <Aux>
+      {/* <div>{id}</div>
+      <div>{url}</div>
+      <div>{name}</div> */}
+
       <div
         style={{
           display: "flex",
           justifyContent: "flex-end",
         }}
       >
-        <Button
-          variant="primary"
-          onClick={() => {
-            setAccount({});
-            setModalShow(true);
-          }}
-        >
+        <Button variant="primary" onClick={() => setModalShow(true)}>
           Add
         </Button>
       </div>
@@ -264,6 +317,9 @@ function Add(props) {
       <Card>
         <Card.Header>
           <Card.Title as="h5">Accounts</Card.Title>
+          {/* <span className="d-block m-t-5">
+            use props <code>hover</code> with <code>Table</code> component
+          </span> */}
         </Card.Header>
         <Card.Body>
           <Table responsive hover>
@@ -278,7 +334,6 @@ function Add(props) {
               </tr>
             </thead>
             <tbody>
-              {loading && <TableSkeletonCard col={6} />}
               {accounts &&
                 accounts.map((data, i) => (
                   <tr key={data._id}>

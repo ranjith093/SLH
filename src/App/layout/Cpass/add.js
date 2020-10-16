@@ -226,7 +226,9 @@ function Add(props) {
     const path = `cpaasAcocunts/viewCpaasAccount`;
     const json = await getApiCall(path);
     console.log("json account ", json);
-    setAccounts(json.data);
+    if (json) {
+      setAccounts(json.data);
+    }
   };
 
   useEffect(() => {

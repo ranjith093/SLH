@@ -6,31 +6,26 @@ import {
   Form,
   Button,
   InputGroup,
-  FormControl,
-  DropdownButton,
-  Dropdown,
   Modal,
+  Spinner,
 } from "react-bootstrap";
 
 import { Formik } from "formik";
 
 import Aux from "../../../hoc/_Aux";
 
-import { requestQuery } from "../../helpers/apirequest";
 import { Link } from "react-router-dom";
 
-import MyFormGroup from "../../components/MyFormGroup";
 import { getApiCall, postApiCall } from "../../helpers/api-helper";
+
+import MyVerticallyCenteredModalGet from "../../components/MyVerticallyCenteredModal";
 import { v4 as uuid } from "uuid";
 
 const validate = (values) => {
-  // console.log("validate");
   const errors = {};
   if (!values.name) {
-    // console.log("name error");
     errors.name = "Required";
-  } else if (values.name.length > 10) {
-    // console.log("length more");
+  } else if (values.name.length > 20) {
     errors.name = "Must be 15 characters or less";
   }
 
@@ -39,9 +34,7 @@ const validate = (values) => {
   } else if (!/^[A-Z0-9._%+-]+\.[A-Z]{2,4}[\s\S]*$/i.test(values.url)) {
     errors.url = "Invalid  URL";
   }
-  //  else if (values.url.length > 20) {
-  //   errors.url = "Must be 20 characters or less";
-  // }
+
   if (!values.token) {
     errors.token = "Required";
   } else if (values.token.length > 20) {
@@ -52,22 +45,18 @@ const validate = (values) => {
   } else if (values.key.length > 20) {
     errors.key = "Must be 20 characters or less";
   }
-  // console.log("error", errors);
 
   return errors;
 };
 
 function MyVerticallyCenteredModal(props) {
-  // console.log("props", { ...props });
   const { setCpass, account, ...props1 } = props;
-  // const passto = (entry, values) => {
-  //   console.log("values from modal pass to", values);
-  // };
-  console.log("account edit", account);
+
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = async (values) => {
-    console.log("values sumbit", values);
-
+    console.log("submit press");
+    setLoading(true);
     const path =
       Object.keys(account).length !== 0
         ? "cpaas/updateCpaas"
@@ -80,27 +69,25 @@ function MyVerticallyCenteredModal(props) {
       ...values1,
     };
 
-    console.log("cpass add body ", body);
     const json = await postApiCall(path, body);
-    console.log("cpass json data", json);
-    const entry = {
-      id: json.id,
-    };
-    // setCpass((preState) => [...preState, Object.assign(entry, values)]);
+
     setCpass((preState) => {
-      console.log("pre state set account", preState);
       if (!json) {
         return preState;
       }
       if (preState) {
-        return preState.map((item) =>
-          item._id === _id ? { ...item, ...values1 } : item
-        );
-        // return [...preState, body];
+        if (Object.keys(account).length !== 0) {
+          return preState.map((item) =>
+            item._id === _id ? { ...item, ...values1 } : item
+          );
+        }
+
+        return [...preState, body];
       }
+
       return [json];
     });
-
+    setLoading(false);
     props.onHide();
   };
   return (
@@ -114,12 +101,7 @@ function MyVerticallyCenteredModal(props) {
         <Modal.Title id="contained-modal-title-vcenter">Add cpass</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Formik
-          // validationSchema={schema}
-          onSubmit={onSubmit}
-          initialValues={account}
-          // validate={validate}
-        >
+        <Formik onSubmit={onSubmit} initialValues={account} validate={validate}>
           {({
             handleSubmit,
             handleChange,
@@ -138,15 +120,14 @@ function MyVerticallyCenteredModal(props) {
                     placeholder="slashrtc"
                     onChange={handleChange}
                     value={values.name}
-                    // isValid={touched.name && !errors.name}
-                    // isInvalid={errors.name}
+                    isValid={touched.name && !errors.name}
+                    isInvalid={errors.name}
                   />
+                  {errors.name && (
+                    <h6 className="py-1 text-red-500">{errors.name}</h6>
+                  )}
                 </Form.Group>
-                {/* <MyFormGroup
-                  errors={errors}
-                  handleChange={handleChange}
-                  name="url"
-                /> */}
+
                 <Form.Group as={Col} md="6" controlId="url">
                   <Form.Label>URL</Form.Label>
                   <Form.Control
@@ -154,7 +135,8 @@ function MyVerticallyCenteredModal(props) {
                     value={values.url}
                     placeholder="www.slashrtc.com"
                     onChange={handleChange}
-                    // isInvalid={errors.url}
+                    isValid={touched.url && !errors.url}
+                    isInvalid={errors.url}
                   />
                   {errors.url && (
                     <h6 className="py-1 text-red-500">{errors.url}</h6>
@@ -167,8 +149,12 @@ function MyVerticallyCenteredModal(props) {
                     placeholder="Enter Token"
                     value={values.token}
                     onChange={handleChange}
-                    // isInvalid={errors.token}
+                    isValid={touched.token && !errors.token}
+                    isInvalid={errors.token}
                   />
+                  {errors.token && (
+                    <h6 className="py-1 text-red-500">{errors.token}</h6>
+                  )}
                 </Form.Group>
                 <Form.Group as={Col} md="6" controlId="key">
                   <Form.Label>Key</Form.Label>
@@ -177,19 +163,17 @@ function MyVerticallyCenteredModal(props) {
                     placeholder="Key"
                     value={values.key}
                     onChange={handleChange}
-                    // isInvalid={errors.key}
+                    isValid={touched.key && !errors.key}
+                    isInvalid={errors.key}
                   />
+                  {errors.key && (
+                    <h6 className="py-1 text-red-500">{errors.key}</h6>
+                  )}
                 </Form.Group>
               </Form.Row>
-              {/* <Form.Group controlId="checkBox">
-                <Form.Check
-                  type="checkbox"
-                  label="Check me out"
-                  onChange={handleChange}
-                />
-              </Form.Group> */}
-              <Button variant="primary" type="submit">
-                Submit
+
+              <Button variant="primary" disabled={loading} type="submit">
+                {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
               </Button>
             </Form>
           )}
@@ -203,6 +187,7 @@ const Cpass = () => {
   const [cpass, setCpass] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
   const [account, setAccount] = useState({});
+  const [deletConfirm, setDeletConfirm] = useState(false);
 
   const getData = async () => {
     const path = "cpaas/viewCpaas";
@@ -214,6 +199,25 @@ const Cpass = () => {
   useEffect(() => {
     getData();
   }, []);
+  const onDelete = async () => {
+    const path = "cpaas/deleteCpaas";
+
+    const body = { id: account._id };
+
+    const json = await postApiCall(path, body);
+    if (json) {
+      setCpass((preState) => {
+        console.log("pre state set account", preState);
+
+        if (preState) {
+          return preState.filter((item) => item._id !== account._id);
+          // return [...preState, body];
+        }
+        return [];
+      });
+    }
+    setDeletConfirm(false);
+  };
 
   return (
     <Aux>
@@ -225,7 +229,13 @@ const Cpass = () => {
               justifyContent: "flex-end",
             }}
           >
-            <Button variant="primary" onClick={() => setModalShow(true)}>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setAccount({});
+                setModalShow(true);
+              }}
+            >
               Add
             </Button>
           </div>
@@ -235,26 +245,24 @@ const Cpass = () => {
             setCpass={setCpass}
             account={account}
           />
+          <MyVerticallyCenteredModalGet
+            title="Are you sure want to Delete ?"
+            show={deletConfirm}
+            onHide={() => setDeletConfirm(false)}
+            body={
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Button onClick={onDelete}>Yes</Button>
+                <Button onClick={() => setDeletConfirm(false)}>No</Button>
+              </div>
+            }
+          />
 
           <Row>
-            {/* EXPECTED Cpass  
-              cpass=   [
-                  {
-                      "id": "5f804458e318062dd0d888ba",
-                      "name": "name",
-                      "url": "url",
-                      "token": "token ",
-                      "key": "key"
-                  },
-                  {
-                      "id": "5f804603e318062dd0d888bb",
-                      "name": "vedantu",
-                      "url": "vedantu.slashrtc.in",
-                      "token": "vedantuGateway",
-                      "key": "507130"
-                  }
-              ] */}
-
             {cpass &&
               cpass.map((data) => (
                 <Col key={data._id} md={6} xl={4} className="mb-4">
@@ -274,20 +282,23 @@ const Cpass = () => {
                             setModalShow(true);
                           }}
                         />
+                        <i
+                          className="feather icon-trash
+                       auth-icon ml-3"
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            setAccount(data);
+                            setDeletConfirm(true);
+                          }}
+                        />
                       </div>
                       <Link to={{ pathname: `/cpass/${data._id}`, data: data }}>
-                        {/* <h6 className="mb-4">{data.url}</h6> */}
                         <div className="row d-flex align-items-center mb-2">
                           <div className="col-9">
                             <h3 className="f-w-300 d-flex align-items-center m-b-0 capitalize">
-                              {/* <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "} */}
                               {data.name}
                             </h3>
                           </div>
-
-                          {/* <div className="col-3 text-right">
-                            <p className="m-b-0">{data.key}</p>
-                          </div> */}
                         </div>
 
                         <h6 className="my-2 text-gray-700">{data.url}</h6>

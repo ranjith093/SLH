@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card, Col, Row } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Aux from "../../../hoc/_Aux";
 import settingsItem from "../../routes/settings-items";
@@ -11,8 +11,12 @@ function Index() {
         <>
           <Link to={{ pathname: `/${data.id}`, data: data }}>
             <div className="w-40 h-40 bg-white shadow-md rounded-md flex flex-col justify-center items-center">
-              {/* <i className="feather icon-lock " /> */}
-              {data.title}
+              <i
+                class={`fa ${data.icon} fa-4x mb-2 `}
+                style={{ color: "#3F4D67" }}
+                aria-hidden="true"
+              />
+              <h6 className="text-gray-600"> {data.title}</h6>
             </div>
           </Link>
         </>
@@ -25,24 +29,6 @@ function Index() {
       <Row>
         <Col>
           <Row>
-            {/* EXPECTED Cpass  
-          cpass=   [
-              {
-                  "id": "5f804458e318062dd0d888ba",
-                  "name": "name",
-                  "url": "url",
-                  "token": "token ",
-                  "key": "key"
-              },
-              {
-                  "id": "5f804603e318062dd0d888bb",
-                  "name": "vedantu",
-                  "url": "vedantu.slashrtc.in",
-                  "token": "vedantuGateway",
-                  "key": "507130"
-              }
-          ] */}
-
             {settingsItem &&
               settingsItem.items.map((data) => (
                 <>
@@ -57,7 +43,6 @@ function Index() {
                       <SettingItem items={data.settings} />
                     </div>
                   </div>
-                  {/* <div className="h-1 rounded-sm w-full bg-gray-300 " /> */}
                 </>
               ))}
           </Row>

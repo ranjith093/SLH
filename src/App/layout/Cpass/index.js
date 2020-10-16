@@ -59,21 +59,48 @@ const validate = (values) => {
 
 function MyVerticallyCenteredModal(props) {
   // console.log("props", { ...props });
-  const { setCpass, ...props1 } = props;
+  const { setCpass, account, ...props1 } = props;
   // const passto = (entry, values) => {
   //   console.log("values from modal pass to", values);
   // };
+  console.log("account edit", account);
 
   const onSubmit = async (values) => {
-    // console.log("values ", values);
+    console.log("values sumbit", values);
 
-    const path = "cpaas/addCpaas";
-    const body = { id: uuid(), ...values };
+    const path =
+      Object.keys(account).length !== 0
+        ? "cpaas/updateCpaas"
+        : "cpaas/addCpaas";
+
+    const { _id, ...values1 } = values;
+
+    const body = {
+      id: Object.keys(account).length !== 0 ? _id : uuid(),
+      ...values1,
+    };
+
+    console.log("cpass add body ", body);
     const json = await postApiCall(path, body);
+    console.log("cpass json data", json);
     const entry = {
       id: json.id,
     };
-    setCpass((preState) => [...preState, Object.assign(entry, values)]);
+    // setCpass((preState) => [...preState, Object.assign(entry, values)]);
+    setCpass((preState) => {
+      console.log("pre state set account", preState);
+      if (!json) {
+        return preState;
+      }
+      if (preState) {
+        return preState.map((item) =>
+          item._id === _id ? { ...item, ...values1 } : item
+        );
+        // return [...preState, body];
+      }
+      return [json];
+    });
+
     props.onHide();
   };
   return (
@@ -90,8 +117,8 @@ function MyVerticallyCenteredModal(props) {
         <Formik
           // validationSchema={schema}
           onSubmit={onSubmit}
-          initialValues={{}}
-          validate={validate}
+          initialValues={account}
+          // validate={validate}
         >
           {({
             handleSubmit,
@@ -110,8 +137,9 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="slashrtc"
                     onChange={handleChange}
+                    value={values.name}
                     // isValid={touched.name && !errors.name}
-                    isInvalid={errors.name}
+                    // isInvalid={errors.name}
                   />
                 </Form.Group>
                 {/* <MyFormGroup
@@ -123,9 +151,10 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Label>URL</Form.Label>
                   <Form.Control
                     type="text"
+                    value={values.url}
                     placeholder="www.slashrtc.com"
                     onChange={handleChange}
-                    isInvalid={errors.url}
+                    // isInvalid={errors.url}
                   />
                   {errors.url && (
                     <h6 className="py-1 text-red-500">{errors.url}</h6>
@@ -136,6 +165,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Control
                     type="text"
                     placeholder="Enter Token"
+                    value={values.token}
                     onChange={handleChange}
                     // isInvalid={errors.token}
                   />
@@ -145,6 +175,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Control
                     type="text"
                     placeholder="Key"
+                    value={values.key}
                     onChange={handleChange}
                     // isInvalid={errors.key}
                   />
@@ -171,6 +202,7 @@ function MyVerticallyCenteredModal(props) {
 const Cpass = () => {
   const [cpass, setCpass] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
+  const [account, setAccount] = useState({});
 
   const getData = async () => {
     const path = "cpaas/viewCpaas";
@@ -201,6 +233,7 @@ const Cpass = () => {
             show={modalShow}
             onHide={() => setModalShow(false)}
             setCpass={setCpass}
+            account={account}
           />
 
           <Row>
@@ -226,15 +259,27 @@ const Cpass = () => {
               cpass.map((data) => (
                 <Col key={data._id} md={6} xl={4} className="mb-4">
                   <>
-                    <Link to={{ pathname: `/cpass/${data._id}`, data: data }}>
-                      <Card.Body
-                        className="shadow-1"
-                        style={{ marginTop: "20px", background: "white" }}
-                      >
-                        <h6 className="mb-4">{data.url}</h6>
+                    <Card.Body
+                      className="shadow-1"
+                      style={{ marginTop: "20px", background: "white" }}
+                    >
+                      {" "}
+                      <div className=" flex justify-end">
+                        <i
+                          className="feather icon-edit
+                       auth-icon "
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            setAccount(data);
+                            setModalShow(true);
+                          }}
+                        />
+                      </div>
+                      <Link to={{ pathname: `/cpass/${data._id}`, data: data }}>
+                        {/* <h6 className="mb-4">{data.url}</h6> */}
                         <div className="row d-flex align-items-center mb-2">
                           <div className="col-9">
-                            <h3 className="f-w-300 d-flex align-items-center m-b-0">
+                            <h3 className="f-w-300 d-flex align-items-center m-b-0 capitalize">
                               {/* <i className="feather icon-arrow-up text-c-green f-30 m-r-5" />{" "} */}
                               {data.name}
                             </h3>
@@ -245,8 +290,10 @@ const Cpass = () => {
                           </div> */}
                         </div>
 
+                        <h6 className="my-2 text-gray-700">{data.url}</h6>
+
                         <div
-                          className="progress m-t-20"
+                          className="progress mt-2"
                           style={{ height: "7px" }}
                         >
                           <div
@@ -258,8 +305,8 @@ const Cpass = () => {
                             aria-valuemax="100"
                           />
                         </div>
-                      </Card.Body>
-                    </Link>
+                      </Link>
+                    </Card.Body>
                   </>
                 </Col>
               ))}

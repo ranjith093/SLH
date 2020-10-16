@@ -252,6 +252,26 @@ function Add(props) {
     //   });
   }, []);
 
+  const onDelete = async () => {
+    const path = "cpaasAcocunts/deleteCpaasAccount";
+
+    const body = { id: account._id };
+
+    const json = await postApiCall(path, body);
+    if (json) {
+      setAccounts((preState) => {
+        console.log("pre state set account", preState);
+
+        if (preState) {
+          setDeletConfirm(false);
+          return preState.filter((item) => item._id !== account._id);
+          // return [...preState, body];
+        }
+        return [];
+      });
+    }
+  };
+
   return (
     <Aux>
       {/* <div>{id}</div>
@@ -286,8 +306,8 @@ function Add(props) {
               justifyContent: "flex-end",
             }}
           >
-            <Button>Yes</Button>
-            <Button>No</Button>
+            <Button onClick={onDelete}>Yes</Button>
+            <Button onClick={() => setDeletConfirm(false)}>No</Button>
           </div>
         }
       />
@@ -342,7 +362,10 @@ function Add(props) {
                         className="feather icon-trash
                        auth-icon ml-3"
                         style={{ cursor: "pointer" }}
-                        onClick={() => setDeletConfirm(true)}
+                        onClick={() => {
+                          setAccount(data);
+                          setDeletConfirm(true);
+                        }}
                       />
                     </td>
                   </tr>

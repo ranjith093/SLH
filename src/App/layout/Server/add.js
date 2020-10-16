@@ -65,15 +65,20 @@ const validate = (values) => {
 function MyVerticallyCenteredModal(props) {
   console.log("props", { ...props });
   const { setAccounts, id, account, ...props1 } = props;
-  const passto = (entry, values) => {
-    console.log("values from modal pass to", values);
-  };
-
+  // const passto = (entry, values) => {
+  //   console.log("values from modal pass to", values);
+  // };
+  console.log("account edit", account);
   const onSubmit = async (values) => {
     console.log("values ", { id, ...values });
+    const { _id, ...values1 } = values;
 
     // const path = "serverDatabase/addServerDatabase";
-    const body = { serverId: id, id: uuid(), ...values };
+    const body = {
+      serverId: id,
+      id: Object.keys(account).length !== 0 ? _id : uuid(),
+      ...values1,
+    };
 
     // const path = "cpaasAcocunts/addCpaasAccount";
     const path =
@@ -91,7 +96,10 @@ function MyVerticallyCenteredModal(props) {
         return preState;
       }
       if (preState) {
-        return [...preState, body];
+        return preState.map((item) =>
+          item._id === _id ? { ...item, ...values1 } : item
+        );
+        // return [...preState, body];
       }
       return [json];
     });
@@ -150,7 +158,7 @@ function MyVerticallyCenteredModal(props) {
         <Formik
           // validationSchema={schema}
           onSubmit={onSubmit}
-          initialValues={{}}
+          initialValues={account}
           validate={validate}
         >
           {({
@@ -170,6 +178,7 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="slashrtc"
                     onChange={handleChange}
+                    value={values.name}
                     isValid={touched.name && !errors.name}
                     isInvalid={!!errors.name}
                   />
@@ -184,6 +193,7 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="192.169.0.1"
                     onChange={handleChange}
+                    value={values.ip}
                     isInvalid={!!errors.ip}
                   />
                 </Form.Group>
@@ -192,6 +202,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Control
                     type="text"
                     placeholder="22"
+                    value={values.port}
                     onChange={handleChange}
                     isInvalid={!!errors.port}
                   />
@@ -201,6 +212,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Control
                     type="text"
                     placeholder="22"
+                    value={values.publicIp}
                     onChange={handleChange}
                     // isInvalid={!!errors.publicIp}
                   />
@@ -210,6 +222,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Control
                     type="text"
                     placeholder="22"
+                    value={values.publicPort}
                     onChange={handleChange}
                     // isInvalid={!!errors.publicPort}
                   />
@@ -225,6 +238,7 @@ function MyVerticallyCenteredModal(props) {
                     size="sm"
                     as="select"
                     defaultValue="select"
+                    value={values.type}
                     onChange={handleChange}
                     isInvalid={!!errors.type}
                   >
@@ -294,6 +308,26 @@ function Add(props) {
     //   });
   }, []);
 
+  const onDelete = async () => {
+    const path = "serverDatabase/deleteServerDatabase";
+
+    const body = { id: account._id };
+
+    const json = await postApiCall(path, body);
+    if (json) {
+      setAccounts((preState) => {
+        console.log("pre state set account", preState);
+
+        if (preState) {
+          setDeletConfirm(false);
+          return preState.filter((item) => item._id !== account._id);
+          // return [...preState, body];
+        }
+        return [];
+      });
+    }
+  };
+
   return (
     <Aux>
       {/* <div>{id}</div>
@@ -328,8 +362,8 @@ function Add(props) {
               justifyContent: "flex-end",
             }}
           >
-            <Button>Yes</Button>
-            <Button>No</Button>
+            <Button onClick={onDelete}>Yes</Button>
+            <Button onClick={() => setDeletConfirm(false)}>No</Button>
           </div>
         }
       />
@@ -366,13 +400,19 @@ function Add(props) {
                         className="feather icon-edit
                        auth-icon "
                         style={{ cursor: "pointer" }}
-                        onClick={() => setModalShow(true)}
+                        onClick={() => {
+                          setAccount(data);
+                          setModalShow(true);
+                        }}
                       />
                       <i
                         className="feather icon-trash
                        auth-icon ml-3"
                         style={{ cursor: "pointer" }}
-                        onClick={() => setDeletConfirm(true)}
+                        onClick={() => {
+                          setAccount(data);
+                          setDeletConfirm(true);
+                        }}
                       />
                     </td>
                   </tr>

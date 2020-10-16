@@ -53,21 +53,44 @@ const validate = (values) => {
 
 function MyVerticallyCenteredModal(props) {
   console.log("props", { ...props });
-  const { setCpass, ...props1 } = props;
-  const passto = (entry, values) => {
-    console.log("values from modal pass to", values);
-  };
+  const { setCpass, account, ...props1 } = props;
+  // const passto = (entry, values) => {
+  //   console.log("values from modal pass to", values);
+  // };
 
   const onSubmit = async (values) => {
     // console.log("values ", values);
 
-    const path = "server/addServer";
-    const body = { id: uuid(), ...values };
+    // const path = "server/addServer";
+    const path =
+      Object.keys(account).length !== 0
+        ? "server/updateServer"
+        : "server/addServer";
+
+    const { _id, ...values1 } = values;
+    const body = {
+      id: Object.keys(account).length !== 0 ? _id : uuid(),
+      ...values1,
+    };
     const json = await postApiCall(path, body);
     const entry = {
       id: json.id,
     };
-    setCpass((preState) => [...preState, Object.assign(entry, values)]);
+    // setCpass((preState) => [...preState, Object.assign(entry, values)]);
+    setCpass((preState) => {
+      console.log("pre state set account", preState);
+      if (!json) {
+        return preState;
+      }
+      if (preState) {
+        return preState.map((item) =>
+          item._id === _id ? { ...item, ...values1 } : item
+        );
+        // return [...preState, body];
+      }
+      return [json];
+    });
+
     props.onHide();
 
     // const path = "server/add";
@@ -116,7 +139,7 @@ function MyVerticallyCenteredModal(props) {
         <Formik
           // validationSchema={schema}
           onSubmit={onSubmit}
-          initialValues={{}}
+          initialValues={account}
           validate={validate}
         >
           {({
@@ -136,6 +159,7 @@ function MyVerticallyCenteredModal(props) {
                     type="text"
                     placeholder="Enter Name"
                     onChange={handleChange}
+                    value={values.name}
                     isValid={touched.name && !errors.name}
                     isInvalid={!!errors.name}
                   />
@@ -148,6 +172,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Label>IP</Form.Label>
                   <Form.Control
                     type="text"
+                    value={values.ip}
                     placeholder="192.168.0.1"
                     onChange={handleChange}
                     isInvalid={!!errors.ip}
@@ -158,6 +183,7 @@ function MyVerticallyCenteredModal(props) {
                   <Form.Control
                     type="text"
                     placeholder="22"
+                    value={values.port}
                     onChange={handleChange}
                     isInvalid={!!errors.port}
                   />
@@ -193,6 +219,7 @@ const Cpass = () => {
   const [cpass, setCpass] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
 
+  const [account, setAccount] = useState({});
   const getData = async () => {
     const path = "server/viewServer";
     const json = await getApiCall(path);
@@ -240,6 +267,7 @@ const Cpass = () => {
             show={modalShow}
             onHide={() => setModalShow(false)}
             setCpass={setCpass}
+            account={account}
           />
 
           <Row>
@@ -265,10 +293,23 @@ const Cpass = () => {
               cpass.map((data) => (
                 <Col key={data.id} md={6} xl={4} className="mb-4">
                   <>
-                    <Link to={{ pathname: `/server/${data._id}`, data: data }}>
-                      <Card.Body
-                        className="shadow-1"
-                        style={{ marginTop: "20px", background: "white" }}
+                    <Card.Body
+                      className="shadow-1"
+                      style={{ marginTop: "20px", background: "white" }}
+                    >
+                      <div className=" flex justify-end">
+                        <i
+                          className="feather icon-edit
+                       auth-icon "
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            setAccount(data);
+                            setModalShow(true);
+                          }}
+                        />
+                      </div>
+                      <Link
+                        to={{ pathname: `/server/${data._id}`, data: data }}
                       >
                         <div className="row d-flex align-items-center mb-2">
                           <div className="col-9">
@@ -301,8 +342,8 @@ const Cpass = () => {
                             aria-valuemax="100"
                           />
                         </div>
-                      </Card.Body>
-                    </Link>
+                      </Link>
+                    </Card.Body>
                   </>
                 </Col>
               ))}

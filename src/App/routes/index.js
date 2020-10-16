@@ -34,7 +34,9 @@ const Nlp = React.lazy(() => import("../layout/Nlp"));
 const MediaServer = React.lazy(() => import("../layout/MediaServer"));
 
 //create user
-const CreateUser = React.lazy(() => import("../layout/CreateUser"));
+const Customer = React.lazy(() => import("../layout/Customer"));
+//Users
+const Users = React.lazy(() => import("../layout/Users"));
 
 //Form
 const FormTest = React.lazy(() => import("../layout/Form"));
@@ -69,10 +71,16 @@ const routes = [
     component: MediaServer,
   },
   {
-    path: "/createUser",
+    path: "/customers",
     exact: true,
     name: "Create user",
-    component: CreateUser,
+    component: Customer,
+  },
+  {
+    path: "/users",
+    exact: true,
+    name: "Create user",
+    component: Users,
   },
   { path: "/formtest", exact: true, name: "From", component: FormTest },
   { path: "/formtest/:id", exact: true, name: "From", component: FormTestAdd },

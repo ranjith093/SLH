@@ -237,7 +237,7 @@ export default {
       children: [
         {
           id: "create",
-          title: "Create User",
+          title: "Customers",
           type: "item",
           url: "/createUser",
           icon: "feather icon-user",

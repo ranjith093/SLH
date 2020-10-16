@@ -17,15 +17,30 @@ export default {
     },
     {
       id: "create",
-      title: "Create",
+      title: "Customer",
       type: "group",
       icon: "icon-navigation",
       children: [
         {
           id: "create",
-          title: "Create User",
+          title: "Customer",
           type: "item",
-          url: "/createUser",
+          url: "/customers",
+          icon: "feather icon-user",
+        },
+      ],
+    },
+    {
+      id: "user",
+      title: "User",
+      type: "group",
+      icon: "icon-navigation",
+      children: [
+        {
+          id: "user",
+          title: "User",
+          type: "item",
+          url: "/users",
           icon: "feather icon-user",
         },
       ],

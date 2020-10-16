@@ -135,16 +135,25 @@ function MyVerticallyCenteredModal(props) {
     // const entry = {
     //   id: json.id,
     // };
-    setAccounts((preState) => {
-      console.log("pre state set account", preState);
-      if (!json) {
-        return preState;
-      }
-      if (preState) {
-        return [...preState, body];
-      }
-      return [json];
-    });
+    const getData = async () => {
+      const path = `cloudCarrierNumbers/viewCloudCarrierNumber`;
+      const json = await getApiCall(path, id);
+      console.log("json account ", json);
+      setAccounts(json.data);
+      // setLoading(false);
+    };
+    getData();
+
+    // setAccounts((preState) => {
+    //   console.log("pre state set account", preState);
+    //   if (!json) {
+    //     return preState;
+    //   }
+    //   if (preState) {
+    //     return [...preState, body];
+    //   }
+    //   return [json];
+    // });
     props.onHide();
   };
 

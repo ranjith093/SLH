@@ -239,61 +239,64 @@ const Cpass = () => {
       <nav className=" px-2">
         <div className="-mb-px flex justify-center">
           <a
-            className={`no-underline  text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
+            className={`no-underline  cursor-pointer text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
               index == 0
                 ? "border-teal-dark"
                 : "border-transparent text-gray-900"
             }`}
-            href="#"
+            // href="#"
             onClick={useCallback(() => set(0), [])}
           >
             {/* <i className="fa fa-home fa-2x" aria-hidden="true" /> */}
             Home
           </a>
           <a
-            className={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
+            className={`no-underline cursor-pointer text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
               index == 1
                 ? "border-teal-dark"
                 : "border-transparent text-gray-900"
             }`}
-            href="#"
+            // href="#"
             onClick={useCallback(() => set(1), [])}
           >
             Options
           </a>
           <a
-            className={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300  ${
+            className={`no-underline cursor-pointer text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300  ${
               index == 2
                 ? "border-teal-dark"
                 : "border-transparent text-gray-900"
             }`}
-            href="#"
+            // href="#"
             onClick={useCallback(() => set(2), [])}
           >
             Cpass
           </a>
           <a
-            className={`no-underline text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
+            className={`no-underline cursor-pointer text-teal-dark border-b-2  uppercase tracking-wide font-bold text-xs py-3 mr-8 transform duration-300 ${
               index == 3
                 ? "border-teal-dark"
                 : "border-transparent text-gray-900"
             }`}
-            href="#"
+            // href="#"
             onClick={useCallback(() => set(3), [])}
           >
             Dialer
           </a>
         </div>
       </nav>
-      <div
-        className="absolute left-0 right-0  h-full cursor-pointer flex items-center  "
-        // onClick={onClick}
-      >
-        {transitions.map(({ item, props, key }) => {
-          const Page = pages[item];
-          return <Page key={key} style={props} onClick={onClick} />;
-        })}
+      <div className=" relative " style={{ height: "500px" }}>
+        <div
+          className="absolute  left-0 right-0 bottom-0 top-0  flex items-center  "
+          // onClick={onClick}
+        >
+          {transitions.map(({ item, props, key }) => {
+            const Page = pages[item];
+            return <Page key={key} style={props} onClick={onClick} />;
+          })}
+        </div>
       </div>
+
       {/* <Button variant="primary">Submit</Button> */}
     </Aux>
   );

@@ -1,85 +1,59 @@
 import React, { useEffect, useState } from "react";
 import Aux from "../../../hoc/_Aux";
-import {
-  Col,
-  Card,
-  Table,
-  Form,
-  Button,
-  Modal,
-  Spinner,
-} from "react-bootstrap";
+import { Row, Col, Card, Table, Form, Button, Modal } from "react-bootstrap";
 import { Formik } from "formik";
 
 import MyVerticallyCenteredModalGet from "../../components/MyVerticallyCenteredModal";
 import { getApiCall, postApiCall } from "../../helpers/api-helper";
-import { v4 as uuid } from "uuid";
 
 import TableSkeletonCard from "../../components/TableSkeletonCard";
+import { v4 as uuid } from "uuid";
+
 const validate = (values) => {
-  // console.log("validate");
   const errors = {};
   if (!values.name) {
     errors.name = "Required";
-  } else if (values.name.length > 15) {
+  } else if (values.name.length > 10) {
     errors.name = "Must be 15 characters or less";
   }
-
-  if (!values.ip) {
-    errors.ip = "Required";
-  } else if (
-    !/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
-      values.ip
-    )
-  ) {
-    errors.ip = "Invalid  IP ";
+  if (!values.gateway) {
+    errors.gateway = "Required";
+  } else if (values.gateway.length > 10) {
+    errors.gateway = "Must be 15 characters or less";
   }
-  // else if (
-  //   /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(
-  //     values.ip
-  //   )
-  // ) {
-  //   errors.ip = "Invalid IP";
-  // }
-  else if (values.ip.length > 20) {
-    errors.ip = "Must be 20 characters or less";
+  if (!values.callerID) {
+    errors.callerID = "Required";
+  } else if (values.callerID.length > 20) {
+    errors.callerID = "Must be 15 characters or less";
   }
-  if (!values.port) {
-    errors.port = "Required";
-  } else if (!/^([0-9]{1,5})$/.test(values.port)) {
-    errors.port = "Invalid  port ";
-  } else if (values.port.length > 20) {
-    errors.port = "Must be 20 characters or less";
-  }
-  if (!values.type) {
-    errors.type = "Required";
-  } else if (values.type.length > 20) {
-    errors.type = "Must be 20 characters or less";
-  } else if (values.type === "select") {
-    errors.type = "plz select";
+  if (!values.domain) {
+    errors.domain = "Required";
+  } else if (!/^[A-Z0-9._%+-]+\.[A-Z]{2,4}[\s\S]*$/i.test(values.domain)) {
+    errors.domain = "Invalid  Domain";
+  } else if (values.domain.length > 20) {
+    errors.domain = "Must be 15 characters or less";
   }
 
   return errors;
 };
 
 function MyVerticallyCenteredModal(props) {
-  const { setAccounts, id, account, ...props1 } = props;
-  const [loading, setLoading] = useState(false);
+  const { setAccounts, account, id, ...props1 } = props;
+  // console.log("account edit", account);
 
   const onSubmit = async (values) => {
-    setLoading(true);
     const { _id, ...values1 } = values;
 
     const body = {
-      serverId: id,
+      cpaasAccountId: id,
       id: Object.keys(account).length !== 0 ? _id : uuid(),
       ...values1,
     };
 
     const path =
       Object.keys(account).length !== 0
-        ? "serverDatabase/updateServerDatabase"
-        : "serverDatabase/addServerDatabase";
+        ? "cpaasAcocunts/updateCpaasAccount"
+        : "cpaasAcocunts/addCpaasAccount";
     const json = await postApiCall(path, body);
 
     setAccounts((preState) => {
@@ -93,11 +67,11 @@ function MyVerticallyCenteredModal(props) {
             item._id === _id ? { ...item, ...values1 } : item
           );
         }
+
         return [...preState, body];
       }
       return [json];
     });
-    setLoading(false);
     props.onHide();
   };
   return (
@@ -109,12 +83,13 @@ function MyVerticallyCenteredModal(props) {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Add Databases
+          Add Accounts
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Formik
           // validationSchema={schema}
+          enableReinitialize={true}
           onSubmit={onSubmit}
           initialValues={account}
           validate={validate}
@@ -144,79 +119,50 @@ function MyVerticallyCenteredModal(props) {
                     <h6 className="py-1 text-red-500">{errors.name}</h6>
                   )}
                 </Form.Group>
-
-                <Form.Group as={Col} md="6" controlId="ip">
-                  <Form.Label>IP</Form.Label>
+                <Form.Group as={Col} md="6" controlId="domain">
+                  <Form.Label>Domain</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="192.169.0.1"
-                    isValid={touched.ip && !errors.ip}
+                    placeholder="www.slashrtc.com "
+                    value={values.domain}
                     onChange={handleChange}
-                    value={values.ip}
-                    isInvalid={!!errors.ip}
+                    isInvalid={!!errors.domain}
                   />
-                  {errors.ip && (
-                    <h6 className="py-1 text-red-500">{errors.ip}</h6>
+                  {errors.domain && (
+                    <h6 className="py-1 text-red-500">{errors.domain}</h6>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="6" controlId="port">
-                  <Form.Label>Port</Form.Label>
+
+                <Form.Group as={Col} md="6" controlId="gateway">
+                  <Form.Label>Gate Way</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="22"
-                    value={values.port}
+                    placeholder="Enter Gateway"
+                    value={values.gateway}
                     onChange={handleChange}
-                    isValid={touched.ip && !errors.port}
-                    isInvalid={!!errors.port}
+                    isInvalid={!!errors.gateway}
                   />
-                  {errors.port && (
-                    <h6 className="py-1 text-red-500">{errors.port}</h6>
+                  {errors.gateway && (
+                    <h6 className="py-1 text-red-500">{errors.gateway}</h6>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="6" controlId="publicIp">
-                  <Form.Label>publicIp</Form.Label>
+                <Form.Group as={Col} md="6" controlId="callerID">
+                  <Form.Label>Caller Id</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="22"
-                    value={values.publicIp}
+                    value={values.callerID}
+                    placeholder="Enter Caller Id"
                     onChange={handleChange}
-                    // isValid={touched.ip && !errors.port}
-                    // isInvalid={!!errors.publicIp}
+                    isInvalid={!!errors.callerID}
                   />
-                </Form.Group>
-                <Form.Group as={Col} md="6" controlId="publicPort">
-                  <Form.Label>publicPort</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="22"
-                    value={values.publicPort}
-                    onChange={handleChange}
-                    // isInvalid={!!errors.publicPort}
-                  />
-                </Form.Group>
-                <Form.Group as={Col} md="6" controlId="type">
-                  <Form.Label>Type</Form.Label>
-
-                  <Form.Control
-                    size="sm"
-                    as="select"
-                    defaultValue="select"
-                    value={values.type}
-                    onChange={handleChange}
-                    isInvalid={!!errors.type}
-                  >
-                    <option value="select"> Select</option>
-                    <option value="mongodb">MongoDb</option>
-                    <option value="mysql"> MYSQL</option>
-                    <option value="mysql"> Elastic</option>
-                  </Form.Control>
-                  {errors.type && (
-                    <h6 className="py-1 text-red-500">{errors.type}</h6>
+                  {errors.callerID && (
+                    <h6 className="py-1 text-red-500">{errors.callerID}</h6>
                   )}
                 </Form.Group>
               </Form.Row>
-              <Button variant="primary" disabled={loading} type="submit">
-                {loading ? <Spinner animation="border" size="sm" /> : "Submit"}
+
+              <Button variant="primary" type="submit">
+                {Object.keys(account).length !== 0 ? "Update" : "Submit"}
               </Button>
             </Form>
           )}
@@ -232,27 +178,31 @@ function Add(props) {
   const url = props.location.data.url;
 
   const [accounts, setAccounts] = useState([]);
-  const [account, setAccount] = useState({});
   const [modalShow, setModalShow] = React.useState(false);
+
+  const [account, setAccount] = useState({});
+
   const [deletConfirm, setDeletConfirm] = useState(false);
+
   const [loading, setLoading] = useState(false);
 
   const getData = async () => {
-    const path = "serverDatabase/viewServerDatabaseById";
+    const path = `cpaasAcocunts/viewCpaasAccountById`;
     const json = await getApiCall(path, id);
-
+    console.log("json account ", json);
     if (json) {
       setAccounts(json.data);
       setLoading(false);
     }
   };
+
   useEffect(() => {
     setLoading(true);
     getData();
   }, []);
 
   const onDelete = async () => {
-    const path = "serverDatabase/deleteServerDatabase";
+    const path = "cpaasAcocunts/deleteCpaasAccount";
 
     const body = { id: account._id };
 
@@ -310,9 +260,10 @@ function Add(props) {
           </div>
         }
       />
+
       <Card>
         <Card.Header>
-          <Card.Title as="h5">Databases</Card.Title>
+          <Card.Title as="h5">Accounts</Card.Title>
         </Card.Header>
         <Card.Body>
           <Table responsive hover>
@@ -320,9 +271,9 @@ function Add(props) {
               <tr>
                 <th>#</th>
                 <th>Name</th>
-                <th>IP</th>
-                <th>Port</th>
-                <th>Type</th>
+                <th>Gateway</th>
+                <th>Caller ID</th>
+                <th>Domain</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -330,13 +281,21 @@ function Add(props) {
               {loading && <TableSkeletonCard col={6} />}
               {accounts &&
                 accounts.map((data, i) => (
-                  <tr key={data.name}>
+                  <tr key={data._id}>
                     <th scope="row">{i + 1}</th>
                     <td>{data.name}</td>
-                    <td>{data.ip}</td>
-                    <td>{data.port}</td>
-                    <td>{data.type}</td>
-                    <td style={{}}>
+                    <td>{data.gateway}</td>
+                    <td>{data.callerID}</td>
+                    <td>{data.domain}</td>
+                    <td
+                      style={
+                        {
+                          // background: "red",
+                          // display: "flex",
+                          // justifyContent: "flex-end",
+                        }
+                      }
+                    >
                       <i
                         className="feather icon-edit
                        auth-icon "

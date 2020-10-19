@@ -45,5 +45,20 @@ export default {
         },
       ],
     },
+    {
+      id: "report",
+      title: "Report",
+      type: "group",
+      icon: "icon-navigation",
+      children: [
+        {
+          id: "Report",
+          title: "Report",
+          type: "item",
+          url: "/report",
+          icon: "feather icon-user",
+        },
+      ],
+    },
   ],
 };

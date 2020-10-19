@@ -42,6 +42,10 @@ const Users = React.lazy(() => import("../layout/Users"));
 const FormTest = React.lazy(() => import("../layout/Form"));
 const FormTestAdd = React.lazy(() => import("../layout/Form/add"));
 
+//Report
+
+const Report = React.lazy(() => import("../layout/Report"));
+
 const routes = [
   {
     path: "/dashboard/default",
@@ -84,6 +88,7 @@ const routes = [
   },
   { path: "/formtest", exact: true, name: "From", component: FormTest },
   { path: "/formtest/:id", exact: true, name: "From", component: FormTestAdd },
+  { path: "/report", exact: true, name: "Report", component: Report },
 ];
 
 export default routes;

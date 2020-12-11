@@ -22,8 +22,11 @@ const ServerAdd = React.lazy(() => import("../layout/Server/add"));
 const Dip = React.lazy(() => import("../layout/Dip"));
 const DipAdd = React.lazy(() => import("../layout/Dip/add"));
 const DipAddAccount = React.lazy(() => import("../layout/Dip/addAccount"));
-//Settings
 
+// LeadsReport
+const LeadsReport = React.lazy(() => import("../layout/LeadsReport"))
+
+//Settings
 const Settings = React.lazy(() => import("../layout/Settings"));
 
 //NLp
@@ -60,6 +63,7 @@ const routes = [
   { path: "/server/:id", exact: true, name: "Server", component: ServerAdd },
   { path: "/dip", exact: true, name: "Carrier", component: Dip },
   { path: "/did/phone/:id", exact: true, name: "Carrier", component: DipAdd },
+  { path: "/leadsReport", exact: true, name: "Leads", component: LeadsReport },
   {
     path: "/did/account/:id",
     exact: true,

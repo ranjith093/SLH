@@ -35,6 +35,12 @@ export default {
           type: "group",
           icon: "fa-files-o",
         },
+        {
+          id: "leadsReport",
+          title: "Leads Report",
+          type: "group",
+          icon: "fa-id-card",
+        },
         // {
         //   id: "formtest",
         //   title: "Form",

@@ -1,68 +1,88 @@
 import React, { useEffect, useState } from "react";
 import Aux from "../../../hoc/_Aux";
-import { Row, Col, Card, Table, Form, Button, Modal } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Card,
+  Table,
+  Form,
+  Button,
+  Modal,
+  Dropdown,
+  SplitButton,
+  ButtonGroup,
+} from "react-bootstrap";
 import { Formik } from "formik";
 
 import MyVerticallyCenteredModalGet from "../../components/MyVerticallyCenteredModal";
-import { getApiCall, postApiCall } from "../../helpers/api-helper";
+import { getReportApiCall, postReportApiCall, deleteReportApiCall } from "../../helpers/api-helper";
 
 import TableSkeletonCard from "../../components/TableSkeletonCard";
 import { v4 as uuid } from "uuid";
 
 const validate = (values) => {
   const errors = {};
+  if (!values.leadDate) {
+    errors.leadDate = "Required";
+  } 
   if (!values.name) {
     errors.name = "Required";
-  } else if (values.name.length > 10) {
-    errors.name = "Must be 15 characters or less";
+  } else if (values.name.length > 50) {
+    errors.name = "Must be 50 characters or less";
   }
-  if (!values.gateway) {
-    errors.gateway = "Required";
-  } else if (values.gateway.length > 10) {
-    errors.gateway = "Must be 15 characters or less";
+  if (!values.mobileNumber) {
+    errors.mobileNumber = "Required";
+  } else if (values.mobileNumber.length < 10) {
+    errors.mobileNumber = "Must be 10 characters";
   }
-  if (!values.callerID) {
-    errors.callerID = "Required";
-  } else if (values.callerID.length > 20) {
-    errors.callerID = "Must be 15 characters or less";
+  if (!values.whatsAppNumber) {
+    errors.whatsAppNumber = "Required";
+  } else if (values.whatsAppNumber.length < 10) {
+    errors.whatsAppNumber = "Must be 10 characters";
   }
-  if (!values.domain) {
-    errors.domain = "Required";
-  } else if (!/^[A-Z0-9._%+-]+\.[A-Z]{2,4}[\s\S]*$/i.test(values.domain)) {
-    errors.domain = "Invalid  Domain";
-  } else if (values.domain.length > 20) {
-    errors.domain = "Must be 15 characters or less";
+  if (!values.panNumber) {
+    errors.panNumber = "Required";
+  } else if (values.panNumber.length < 10 || values.panNumber.length > 10) {
+    errors.panNumber = "Must be 10 characters";
   }
+  
+  // if (!values.domain) {
+  //   errors.domain = "Required";
+  // } else if (!/^[A-Z0-9._%+-]+\.[A-Z]{2,4}[\s\S]*$/i.test(values.domain)) {
+  //   errors.domain = "Invalid  Domain";
+  // } else if (values.domain.length > 20) {
+  //   errors.domain = "Must be 15 characters or less";
+  // }
 
   return errors;
 };
 
 function MyVerticallyCenteredModal(props) {
-  const { setAccounts, account, id, ...props1 } = props;
+  const { setLeadReports, leadReport , ...props1 } = props;
   // console.log("account edit", account);
 
   const onSubmit = async (values) => {
     const { _id, ...values1 } = values;
 
     const body = {
-      cpaasAccountId: id,
-      id: Object.keys(account).length !== 0 ? _id : uuid(),
+      
+      id: Object.keys(leadReport).length !== 0 ? _id : uuid(),
       ...values1,
     };
 
     const path =
-      Object.keys(account).length !== 0
-        ? "cpaasAcocunts/updateCpaasAccount"
-        : "cpaasAcocunts/addCpaasAccount";
-    const json = await postApiCall(path, body);
+      Object.keys(leadReport).length !== 0
+        ? "reports/:id"
+        : "reports/add";
+    const json = await postReportApiCall(path, body);
 
-    setAccounts((preState) => {
+    setLeadReports((preState) => {
       console.log("pre state set account", preState);
       if (!json) {
         return preState;
       }
       if (preState) {
-        if (Object.keys(account).length !== 0) {
+        if (Object.keys(leadReport).length !== 0) {
           return preState.map((item) =>
             item._id === _id ? { ...item, ...values1 } : item
           );
@@ -83,7 +103,7 @@ function MyVerticallyCenteredModal(props) {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Add Accounts
+          Add Lead Report Data
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -91,7 +111,7 @@ function MyVerticallyCenteredModal(props) {
           // validationSchema={schema}
           enableReinitialize={true}
           onSubmit={onSubmit}
-          initialValues={account}
+          initialValues={leadReport}
           validate={validate}
         >
           {({
@@ -105,64 +125,88 @@ function MyVerticallyCenteredModal(props) {
           }) => (
             <Form onSubmit={handleSubmit}>
               <Form.Row>
+                <Form.Group as={Col} md="6" controlId="leadDate">
+                  <Form.Label>Leads Date</Form.Label>
+                  <Form.Control
+                    type="date"    
+                    onChange={handleChange}
+                    value={values.leadDate}
+                    isValid={!errors.leadDate}
+                    isInvalid={!!errors.leadDate}
+                  />
+                  {errors.leadDate && (
+                    <h6 className="py-1 text-red-500">{errors.leadDate}</h6>
+                  )}
+                </Form.Group>
                 <Form.Group as={Col} md="6" controlId="name">
                   <Form.Label>Name</Form.Label>
                   <Form.Control
                     type="text"
-                    placeholder="slashrtc"
-                    onChange={handleChange}
+                    placeholder="www.slashrtc.com "
                     value={values.name}
-                    isValid={touched.name && !errors.name}
+                    onChange={handleChange}
                     isInvalid={!!errors.name}
                   />
                   {errors.name && (
                     <h6 className="py-1 text-red-500">{errors.name}</h6>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="6" controlId="domain">
-                  <Form.Label>Domain</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="www.slashrtc.com "
-                    value={values.domain}
-                    onChange={handleChange}
-                    isInvalid={!!errors.domain}
-                  />
-                  {errors.domain && (
-                    <h6 className="py-1 text-red-500">{errors.domain}</h6>
-                  )}
-                </Form.Group>
 
-                <Form.Group as={Col} md="6" controlId="gateway">
-                  <Form.Label>Gate Way</Form.Label>
+                <Form.Group as={Col} md="6" controlId="mobileNumber">
+                  <Form.Label>Mobile Number</Form.Label>
                   <Form.Control
-                    type="text"
-                    placeholder="Enter Gateway"
-                    value={values.gateway}
+                    type="number"
+                    placeholder="Mobile Number"
+                    value={values.mobileNumber}
                     onChange={handleChange}
-                    isInvalid={!!errors.gateway}
+                    isInvalid={!!errors.mobileNumber}
                   />
-                  {errors.gateway && (
-                    <h6 className="py-1 text-red-500">{errors.gateway}</h6>
+                  {errors.mobileNumber && (
+                    <h6 className="py-1 text-red-500">{errors.mobileNumber}</h6>
                   )}
                 </Form.Group>
-                <Form.Group as={Col} md="6" controlId="callerID">
-                  <Form.Label>Caller Id</Form.Label>
+                <Form.Group as={Col} md="6" controlId="whatsAppNumber">
+                  <Form.Label>WhatsApp Number</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={values.whatsAppNumber}
+                    placeholder="WhatsApp Number"
+                    onChange={handleChange}
+                    isInvalid={!!errors.whatsAppNumber}
+                  />
+                  {errors.whatsAppNumber && (
+                    <h6 className="py-1 text-red-500">{errors.whatsAppNumber}</h6>
+                  )}
+                </Form.Group>
+                <Form.Group as={Col} md="6" controlId="panNumber">
+                  <Form.Label>PAN Number</Form.Label>
                   <Form.Control
                     type="text"
-                    value={values.callerID}
-                    placeholder="Enter Caller Id"
+                    value={values.panNumber}
+                    placeholder="Enter Pan Number"
                     onChange={handleChange}
-                    isInvalid={!!errors.callerID}
+                    isInvalid={!!errors.panNumber}
                   />
-                  {errors.callerID && (
-                    <h6 className="py-1 text-red-500">{errors.callerID}</h6>
+                  {errors.panNumber && (
+                    <h6 className="py-1 text-red-500">{errors.panNumber}</h6>
                   )}
+                </Form.Group>
+                <Form.Group as={Col} md="6" controlId="type">
+                  <Form.Label>Type</Form.Label>
+                  <Form.Control
+                    as="select"
+                    value={values.type}
+                    onChange={handleChange}
+                  >
+                    <option>IRDA</option>
+                    <option>SAHI</option>
+                  </Form.Control>
+                
                 </Form.Group>
               </Form.Row>
 
               <Button variant="primary" type="submit">
-                {Object.keys(account).length !== 0 ? "Update" : "Submit"}
+                {Object.keys(leadReport).length !== 0 ? "Update" : "Submit"}
               </Button>
             </Form>
           )}
@@ -177,21 +221,21 @@ function Add(props) {
   const name = props.location.data.name;
   const url = props.location.data.url;
 
-  const [accounts, setAccounts] = useState([]);
+  const [leadReports, setLeadReports] = useState([]);
   const [modalShow, setModalShow] = React.useState(false);
 
-  const [account, setAccount] = useState({});
+  const [leadReport, setLeadReport] = useState({});
 
   const [deletConfirm, setDeletConfirm] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
   const getData = async () => {
-    const path = `cpaasAcocunts/viewCpaasAccountById`;
-    const json = await getApiCall(path, id);
+    const path = `reports`;
+    const json = await getReportApiCall(path, id);
     console.log("json account ", json);
     if (json) {
-      setAccounts(json.data);
+      setLeadReports(json.data);
       setLoading(false);
     }
   };
@@ -202,16 +246,16 @@ function Add(props) {
   }, []);
 
   const onDelete = async () => {
-    const path = "cpaasAcocunts/deleteCpaasAccount";
+    const path = "reports/:id";
 
-    const body = { id: account._id };
+    const body = { id: leadReport._id };
 
-    const json = await postApiCall(path, body);
+    const json = await deleteReportApiCall(path, body);
     if (json) {
-      setAccounts((preState) => {
+      setLeadReports((preState) => {
         if (preState) {
           setDeletConfirm(false);
-          return preState.filter((item) => item._id !== account._id);
+          return preState.filter((item) => item._id !== leadReport._id);
           // return [...preState, body];
         }
         return [];
@@ -230,7 +274,7 @@ function Add(props) {
         <Button
           variant="primary"
           onClick={() => {
-            setAccount({});
+            setLeadReport({});
             setModalShow(true);
           }}
         >
@@ -241,8 +285,8 @@ function Add(props) {
         show={modalShow}
         onHide={() => setModalShow(false)}
         id={id}
-        setAccounts={setAccounts}
-        account={account}
+        setLeadReports={setLeadReports}
+        leadReport={leadReport}
       />
       <MyVerticallyCenteredModalGet
         title="Are you sure want to Delete ?"
@@ -263,30 +307,50 @@ function Add(props) {
 
       <Card>
         <Card.Header>
-          <Card.Title as="h5">Accounts</Card.Title>
+          <Card.Title as="h5">Leads Report Table</Card.Title>
         </Card.Header>
         <Card.Body>
-          <Table responsive hover>
+          <Table hover>
             <thead>
               <tr>
                 <th>#</th>
+                <th>Lead Date</th>
                 <th>Name</th>
-                <th>Gateway</th>
-                <th>Caller ID</th>
-                <th>Domain</th>
+                <th>Mobile Number</th>
+                <th>WhatsApp Number</th>
+                <th>PAN Number</th>
+                <th>
+                  <td style={{ padding: "0" }}>
+                    {[SplitButton].map((DropdownType, idx) => (
+                      <DropdownType
+                        as={ButtonGroup}
+                        key={idx}
+                        id={`dropdown-button-drop-${idx}`}
+                        size="sm"
+                        variant="secondary"
+                        title="Type"
+                      >
+                        <Dropdown.Item eventKey="1">IRDA</Dropdown.Item>
+                        <Dropdown.Item eventKey="2">SAHI</Dropdown.Item>
+                      </DropdownType>
+                    ))}
+                  </td>
+                </th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading && <TableSkeletonCard col={6} />}
-              {accounts &&
-                accounts.map((data, i) => (
+              {leadReports &&
+                leadReports.map((data, i) => (
                   <tr key={data._id}>
                     <th scope="row">{i + 1}</th>
+                    <td>{data.leadDate}</td>
                     <td>{data.name}</td>
-                    <td>{data.gateway}</td>
-                    <td>{data.callerID}</td>
-                    <td>{data.domain}</td>
+                    <td>{data.mobileNumber}</td>
+                    <td>{data.whatsAppNumber}</td>
+                    <td>{data.panNumber}</td>
+                    <td>{data.type}</td>
                     <td
                       style={
                         {
@@ -301,7 +365,7 @@ function Add(props) {
                        auth-icon "
                         style={{ cursor: "pointer" }}
                         onClick={() => {
-                          setAccount(data);
+                          setLeadReport(data);
                           setModalShow(true);
                         }}
                       />
@@ -310,7 +374,7 @@ function Add(props) {
                        auth-icon ml-3"
                         style={{ cursor: "pointer" }}
                         onClick={() => {
-                          setAccount(data);
+                          setLeadReport(data);
                           setDeletConfirm(true);
                         }}
                       />

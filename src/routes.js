@@ -39,6 +39,7 @@ const OtherSamplePage = React.lazy(() => import("./Demo/Other/SamplePage"));
 const OtherDocs = React.lazy(() => import("./Demo/Other/Docs"));
 
 const Cpass = React.lazy(() => import("./App/layout/Cpass"));
+const LeadsReport = React.lazy(() => import("./App/layout/LeadsReport"));
 
 const routes = [
   {
@@ -115,6 +116,7 @@ const routes = [
   },
   { path: "/docs", exact: true, name: "Documentation", component: OtherDocs },
   { path: "/dashboard/cpass", exact: true, name: "Cpass", component: Cpass },
+  { path: "/dashboard/leadsReport", exact: true, name: "Leads", component: LeadsReport}
 ];
 
 export default routes;
